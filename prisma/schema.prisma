@@ -10,14 +10,64 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id    String @id @default(uuid())
-  title String
-  text  String
+model Team {
+  id       String @id @default(uuid())
+  name     String
+  slug     String @unique
+  users    User[]
+  league   League @relation(fields: [leagueId], references: [id])
+  leagueId String
 
-  // To return `Date`s intact through the API we use transformers
-  // https://trpc.io/docs/data-transformers
-  // This is unique so it can be used for cursor-based pagination
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+  matchesAsBlueTeam Match[]  @relation(name: "blueTeam")
+  matchesAsRedTeam  Match[]  @relation(name: "redTeam")
+}
+
+model User {
+  id     String  @id @default(uuid())
+  name   String
+  email  String  @unique
+  slug   String  @unique
+  team   Team?   @relation(fields: [teamId], references: [id])
+  teamId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Game {
+  id      String   @id @default(uuid())
+  name    String   @unique
+  slug    String   @unique
+  leagues League[]
+}
+
+model League {
+  id    String @id @default(uuid())
+  name  String
+  slug  String @unique
+  teams Team[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  matches   Match[]
+  game      Game?    @relation(fields: [gameId], references: [id])
+  gameId    String?
+}
+
+model Match {
+  id         String   @id @default(uuid())
+  blueTeam   Team     @relation(name: "blueTeam", fields: [blueTeamId], references: [id])
+  blueTeamId String
+  redTeam    Team     @relation(name: "redTeam", fields: [redTeamId], references: [id])
+  redTeamId  String
+  blueScore  Int?
+  redScore   Int?
+  date       DateTime
+  league     League   @relation(fields: [leagueId], references: [id])
+  leagueId   String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }

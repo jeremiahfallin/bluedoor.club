@@ -1,14 +1,110 @@
-import { Box } from '@chakra-ui/react';
+import { Suspense, useState, useEffect } from 'react';
+import NextError from 'next/error';
+import {
+  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+} from '@chakra-ui/react';
+import { trpc } from '~/utils/trpc';
 
-export default function Schedule({ data }: { data: any }) {
+const colors = [
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'teal',
+  'blue',
+  'cyan',
+  'purple',
+  'pink',
+];
+
+const weekNumber = (date: Date) => {
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+};
+
+function TimeDisplay({ date }: { date: Date }) {
+  const [time, setTime] = useState(date.toUTCString());
+
+  useEffect(() => {
+    setTime(() => {
+      return date.toLocaleString();
+    });
+  }, [time, date]);
+
+  return <>{time}</>;
+}
+
+export default function Schedule({ game }: { game: string }) {
+  const leagueQuery = trpc.league.list.useQuery({ game });
+
+  if (leagueQuery.error) {
+    return (
+      <NextError
+        title={leagueQuery.error.message}
+        statusCode={leagueQuery.error.data?.httpStatus ?? 500}
+      />
+    );
+  }
+
+  if (leagueQuery.status !== 'success') {
+    return <>Loading...</>;
+  }
+
+  const data = leagueQuery.data.items[0];
+
   return (
-    <Box as="main">
-      <Box as="h1">Schedule</Box>
-      <Box>
-        {data.map((post) => (
-          <Box key={post.id}>{post.title}</Box>
-        ))}
+    <Suspense fallback={null}>
+      <Box as="main">
+        <TableContainer>
+          <Table>
+            <TableCaption>Season schedule</TableCaption>
+            <Thead>
+              <Tr>
+                <Th>Time</Th>
+                <Th>Home Team</Th>
+                <Th>Home Score</Th>
+                <Th>Away Team</Th>
+                <Th>Away Score</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {data?.matches.map((league: any) => {
+                // color background based on week number
+                return (
+                  <Tr
+                    key={league.id}
+                    background={`${
+                      colors[weekNumber(league.date) % colors.length]
+                    }.700`}
+                  >
+                    <Td>
+                      <TimeDisplay date={league.date} />
+                    </Td>
+                    <Td>{league.blueTeam.name}</Td>
+                    <Td>{league.blueScore}</Td>
+                    <Td>{league.redTeam.name}</Td>
+                    <Td>{league.redScore}</Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Box>
-    </Box>
+    </Suspense>
   );
 }

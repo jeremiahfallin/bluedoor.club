@@ -5,41 +5,10 @@ import type { AppRouter } from '~/server/routers/_app';
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
-  const postsQuery = trpc.post.list.useInfiniteQuery(
-    {
-      limit: 5,
-    },
-    {
-      getPreviousPageParam(lastPage) {
-        return lastPage.nextCursor;
-      },
-    },
-  );
-
-  const addPost = trpc.post.add.useMutation({
-    async onSuccess() {
-      // refetches posts after a post is added
-      await utils.post.list.invalidate();
-    },
-  });
 
   return (
     <>
-      <h1>Welcome to your tRPC starter!</h1>
-      <p>
-        If you get stuck, check <a href="https://trpc.io">the docs</a>, write a
-        message in our <a href="https://trpc.io/discord">Discord-channel</a>, or
-        write a message in{' '}
-        <a href="https://github.com/trpc/trpc/discussions">
-          GitHub Discussions
-        </a>
-        .
-      </p>
-
-      <h2>
-        Latest Posts
-        {postsQuery.status === 'loading' && '(loading)'}
-      </h2>
+      <h1>Welcome to the Blue Door eSports league!</h1>
 
       <hr />
     </>

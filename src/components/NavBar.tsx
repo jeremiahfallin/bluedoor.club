@@ -7,7 +7,6 @@ import {
   Stack,
   Collapse,
   Icon,
-  Link,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -20,6 +19,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons';
+import { Link } from '@chakra-ui/next-js';
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
@@ -57,7 +57,7 @@ export default function WithSubnavigation() {
           </Flex>
         </Flex>
 
-        <Stack
+        {/* <Stack
           flex={{ base: 1, md: 0 }}
           justify={'flex-end'}
           direction={'row'}
@@ -86,7 +86,7 @@ export default function WithSubnavigation() {
           >
             Sign Up
           </Button>
-        </Stack>
+        </Stack> */}
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
