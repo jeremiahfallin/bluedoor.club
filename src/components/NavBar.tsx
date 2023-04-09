@@ -148,7 +148,7 @@ const DesktopNav = () => {
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
   return (
     <Link
-      href={href}
+      href={href ?? '#'}
       role={'group'}
       display={'block'}
       p={2}
