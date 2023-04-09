@@ -17,6 +17,7 @@ const defaultLeagueSelect = Prisma.validator<Prisma.LeagueSelect>()({
   id: true,
   name: true,
   slug: true,
+  game: true,
   matches: {
     orderBy: {
       date: 'asc',
@@ -52,7 +53,7 @@ export const leagueRouter = router({
        */
 
       const limit = input.limit ?? 50;
-      const { cursor } = input;
+      const { cursor, game } = input;
 
       const items = await prisma.league.findMany({
         select: defaultLeagueSelect,
@@ -61,7 +62,7 @@ export const leagueRouter = router({
         where: {
           game: {
             slug: {
-              equals: input.game,
+              equals: game,
             },
           },
         },

@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-
 import Schedule from '~/components/Schedule';
 
 const games = ['brawlhalla', 'chess', 'rocket-league'];
