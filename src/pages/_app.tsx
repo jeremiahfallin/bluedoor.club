@@ -16,7 +16,11 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const theme = extendTheme({});
+const theme = extendTheme({
+  config: {
+    initialColorMode: 'dark',
+  },
+});
 
 const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout =
