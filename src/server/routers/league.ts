@@ -66,7 +66,7 @@ export const leagueRouter = router({
         where: {
           game: {
             slug: {
-              equals: game,
+              equals: game ?? '',
             },
           },
         },
