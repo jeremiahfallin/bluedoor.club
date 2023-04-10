@@ -34,4 +34,5 @@ const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
   return getLayout(<Component {...pageProps} />);
 }) as AppType;
 
+export { theme };
 export default trpc.withTRPC(MyApp);
