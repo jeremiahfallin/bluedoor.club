@@ -36,6 +36,10 @@ const defaultLeagueSelect = Prisma.validator<Prisma.LeagueSelect>()({
   updatedAt: true,
 });
 
+export type LeaguesWithMatches = Prisma.LeagueGetPayload<{
+  include: { matches: true };
+}>;
+
 export const leagueRouter = router({
   list: publicProcedure
     .input(
@@ -85,7 +89,7 @@ export const leagueRouter = router({
       }
 
       return {
-        items: items.reverse(),
+        leagues: items.reverse(),
         nextCursor,
       };
     }),

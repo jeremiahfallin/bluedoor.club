@@ -5,7 +5,6 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -13,6 +12,7 @@ import {
   TableContainer,
 } from '@chakra-ui/react';
 import { trpc } from '~/utils/trpc';
+import { LeaguesWithMatches } from '~/server/routers/league';
 
 const colors = [
   'red',
@@ -64,7 +64,7 @@ export default function Schedule({ game }: { game: string }) {
     return <>Loading...</>;
   }
 
-  const data = leagueQuery.data.items[0];
+  const data = leagueQuery.data.leagues[0] as any as LeaguesWithMatches;
 
   return (
     <Suspense fallback={null}>
@@ -82,7 +82,7 @@ export default function Schedule({ game }: { game: string }) {
               </Tr>
             </Thead>
             <Tbody>
-              {data?.matches.map((league: any) => {
+              {data.matches.map((league: any) => {
                 // color background based on week number
                 return (
                   <Tr
