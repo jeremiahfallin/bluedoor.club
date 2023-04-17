@@ -78,7 +78,7 @@ export default function Schedule({ game }: { game: string }) {
       <Box as="main">
         <TableContainer>
           <Table>
-            <TableCaption>Season schedule," "
+            <TableCaption>Season schedule,{" "}
               <Link href={rulesets[game]}>
                 ruleset
               </Link>
