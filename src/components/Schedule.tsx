@@ -27,7 +27,7 @@ const colors = [
   'pink',
 ];
 
-inferface Rulesets {
+interface Rulesets {
   brawlhalla: string;
   chess: string;
   "rocket-league": string;
