@@ -27,13 +27,7 @@ const colors = [
   'pink',
 ];
 
-interface Rulesets {
-  brawlhalla: string;
-  chess: string;
-  "rocket-league": string;
-}
-
-const rulesets: Rulesets = {
+const rulesets: { [char: string]: string } = {
   brawlhalla: 'https://docs.google.com/document/d/15-GDjGaiyWGPaBBGZMqPRrQSFmf7P-ww/edit',
   chess: 'https://docs.google.com/document/d/1ouT_7Fe7QV3hOwQNH8XcPmZ2pI_UngGc/edit',
   "rocket-league": 'https://docs.google.com/document/d/1K_VVnifGRR9m47-vY5ILNDdcgc_KETvK/edit',
