@@ -2,6 +2,7 @@ import { Suspense, useState, useEffect } from 'react';
 import NextError from 'next/error';
 import {
   Box,
+  Link,
   Table,
   Thead,
   Tbody,
@@ -25,6 +26,12 @@ const colors = [
   'purple',
   'pink',
 ];
+
+const rulesets = {
+  brawlhalla: 'https://docs.google.com/document/d/15-GDjGaiyWGPaBBGZMqPRrQSFmf7P-ww/edit',
+  chess: 'https://docs.google.com/document/d/1ouT_7Fe7QV3hOwQNH8XcPmZ2pI_UngGc/edit',
+  "rocket-league": 'https://docs.google.com/document/d/1K_VVnifGRR9m47-vY5ILNDdcgc_KETvK/edit',
+};
 
 const weekNumber = (date: Date) => {
   const d = new Date(
@@ -71,7 +78,11 @@ export default function Schedule({ game }: { game: string }) {
       <Box as="main">
         <TableContainer>
           <Table>
-            <TableCaption>Season schedule</TableCaption>
+            <TableCaption>Season schedule," "
+              <Link href={rulesets[game]}>
+                ruleset
+              </Link>
+            </TableCaption>
             <Thead>
               <Tr>
                 <Th>Time</Th>
