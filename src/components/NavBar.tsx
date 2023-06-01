@@ -1,46 +1,69 @@
 import {
   Box,
+  Link as ChakraLink,
   Flex,
   Text,
   IconButton,
-  Button,
+  HStack,
+  Spacer,
   Stack,
   Collapse,
-  Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
   useColorModeValue,
   useDisclosure,
+  Divider,
 } from '@chakra-ui/react';
-import {
-  HamburgerIcon,
-  CloseIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from '@chakra-ui/icons';
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { Link } from '@chakra-ui/next-js';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import { trpc } from '../utils/trpc';
+import { Fragment } from 'react';
 
-export default function WithSubnavigation() {
+export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure();
+  const { data: session } = useSession();
+  const { data: games } = trpc.game.list.useQuery();
+
+  const navItems = [
+    {
+      label: 'Home',
+      href: '/',
+    },
+    ...(games?.map((game) => ({
+      label: game.name,
+      href: `/games/${game.slug}`,
+    })) || []),
+  ];
+
+  const navItemsRight = [
+    {
+      label: 'Admin',
+      href: '/admin',
+      criteria: session?.user?.role === 'ADMIN',
+    },
+    {
+      label: 'Profile',
+      href: '/profile',
+      criteria: session,
+    },
+    {
+      label: 'Sign In',
+      onClick: () => signIn(),
+      criteria: !session,
+    },
+    {
+      label: 'Sign Out',
+      onClick: () => signOut(),
+      criteria: session,
+    },
+  ];
 
   return (
-    <Box>
-      <Flex
-        bg={useColorModeValue('white', 'gray.800')}
-        color={useColorModeValue('gray.600', 'white')}
-        minH={'60px'}
-        py={{ base: 2 }}
-        px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle={'solid'}
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
-        align={'center'}
-      >
+    <Box w="100%">
+      <Flex as="header" bg="blue.500" px={2} py={1}>
         <Flex
           flex={{ base: 1, md: 'auto' }}
-          ml={{ base: -2 }}
           display={{ base: 'flex', md: 'none' }}
+          align={'center'}
         >
           <IconButton
             onClick={onToggle}
@@ -51,222 +74,144 @@ export default function WithSubnavigation() {
             aria-label={'Toggle Navigation'}
           />
         </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-          <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav />
-          </Flex>
+        <Flex display={{ base: 'none', md: 'flex' }} w="100%">
+          <DesktopNav navItemsLeft={navItems} navItemsRight={navItemsRight} />
         </Flex>
-
-        {/* <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={'flex-end'}
-          direction={'row'}
-          spacing={6}
-        >
-          <Button
-            as={'a'}
-            fontSize={'sm'}
-            fontWeight={400}
-            variant={'link'}
-            href={'#'}
-          >
-            Sign In
-          </Button>
-          <Button
-            as={'a'}
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'pink.400'}
-            href={'#'}
-            _hover={{
-              bg: 'pink.300',
-            }}
-          >
-            Sign Up
-          </Button>
-        </Stack> */}
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav navItemsTop={navItems} navItemsBottom={navItemsRight} />
       </Collapse>
     </Box>
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = ({
+  navItemsLeft,
+  navItemsRight,
+}: {
+  navItemsLeft?: any;
+  navItemsRight?: any | null;
+}) => {
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const linkHoverColor = useColorModeValue('gray.800', 'white');
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
   return (
-    <Stack direction={'row'} spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label}>
-          <Popover trigger={'hover'} placement={'bottom-start'}>
-            <PopoverTrigger>
-              <Link
-                p={2}
-                href={navItem.href ?? '#'}
-                fontSize={'sm'}
-                fontWeight={500}
-                color={linkColor}
-                _hover={{
-                  textDecoration: 'none',
-                  color: linkHoverColor,
-                }}
-              >
-                {navItem.label}
-              </Link>
-            </PopoverTrigger>
-
-            {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow={'xl'}
-                bg={popoverContentBgColor}
-                p={4}
-                rounded={'xl'}
-                minW={'sm'}
-              >
-                <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
-        </Box>
-      ))}
-    </Stack>
+    <Flex w="100%">
+      <HStack>
+        {navItemsLeft.map((navItem: any) => (
+          <Box key={navItem.label}>
+            <Link
+              p={2}
+              href={navItem.href}
+              fontSize={'sm'}
+              fontWeight={500}
+              color={linkColor}
+              _hover={{
+                textDecoration: 'none',
+                color: linkHoverColor,
+              }}
+            >
+              {navItem.label}
+            </Link>
+          </Box>
+        ))}
+      </HStack>
+      <Spacer />
+      <HStack>
+        {navItemsRight?.flatMap((navItem: any) => {
+          if (navItem.criteria) {
+            return (
+              <Fragment key={navItem.label}>
+                {navItem.onClick ? (
+                  <ChakraLink
+                    onClick={navItem.onClick}
+                    fontSize={'sm'}
+                    fontWeight={500}
+                    color={linkColor}
+                    _hover={{
+                      textDecoration: 'none',
+                      color: linkHoverColor,
+                    }}
+                  >
+                    {navItem.label}
+                  </ChakraLink>
+                ) : (
+                  <Link
+                    href={navItem.href}
+                    fontSize={'sm'}
+                    fontWeight={500}
+                    color={linkColor}
+                    _hover={{
+                      textDecoration: 'none',
+                      color: linkHoverColor,
+                    }}
+                  >
+                    {navItem.label}
+                  </Link>
+                )}
+              </Fragment>
+            );
+          }
+          return [];
+        })}
+      </HStack>
+    </Flex>
   );
 };
 
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
-  return (
-    <Link
-      href={href ?? '#'}
-      role={'group'}
-      display={'block'}
-      p={2}
-      rounded={'md'}
-      _hover={{ bg: useColorModeValue('pink.50', 'gray.900') }}
-    >
-      <Stack direction={'row'} align={'center'}>
-        <Box>
-          <Text
-            transition={'all .3s ease'}
-            _groupHover={{ color: 'pink.400' }}
-            fontWeight={500}
-          >
-            {label}
-          </Text>
-          <Text fontSize={'sm'}>{subLabel}</Text>
-        </Box>
-        <Flex
-          transition={'all .3s ease'}
-          transform={'translateX(-10px)'}
-          opacity={0}
-          _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
-          justify={'flex-end'}
-          align={'center'}
-          flex={1}
-        >
-          <Icon color={'pink.400'} w={5} h={5} as={ChevronRightIcon} />
-        </Flex>
-      </Stack>
-    </Link>
-  );
-};
-
-const MobileNav = () => {
+const MobileNav = ({
+  navItemsTop,
+  navItemsBottom,
+}: {
+  navItemsTop: any;
+  navItemsBottom: any;
+}) => {
   return (
     <Stack
       bg={useColorModeValue('white', 'gray.800')}
       p={4}
       display={{ md: 'none' }}
     >
-      {NAV_ITEMS.map((navItem) => (
+      {navItemsTop.map((navItem: any) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
+      <Divider colorScheme="blue" />
+      {navItemsBottom?.flatMap((navItem: any) => {
+        if (navItem.criteria) {
+          return (
+            <Fragment key={navItem.label}>
+              {navItem.onClick ? (
+                <MobileNavItem key={navItem.label} {...navItem} />
+              ) : (
+                <MobileNavItem key={navItem.label} {...navItem} />
+              )}
+            </Fragment>
+          );
+        }
+        return [];
+      })}
+      <Divider />
     </Stack>
   );
 };
 
-const MobileNavItem = ({ label, children, href }: NavItem) => {
-  const { isOpen, onToggle } = useDisclosure();
-
+const MobileNavItem = ({ label, href, onClick }: any) => {
   return (
-    <Stack spacing={4} onClick={children && onToggle}>
-      <Flex
-        py={2}
-        as={Link}
-        href={href ?? '#'}
-        justify={'space-between'}
-        align={'center'}
-        _hover={{
-          textDecoration: 'none',
-        }}
-      >
-        <Text
-          fontWeight={600}
-          color={useColorModeValue('gray.600', 'gray.200')}
-        >
-          {label}
-        </Text>
-        {children && (
-          <Icon
-            as={ChevronDownIcon}
-            transition={'all .25s ease-in-out'}
-            transform={isOpen ? 'rotate(180deg)' : ''}
-            w={6}
-            h={6}
-          />
-        )}
-      </Flex>
-
-      <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
-        <Stack
-          mt={2}
-          pl={4}
-          borderLeft={1}
-          borderStyle={'solid'}
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
-          align={'start'}
-        >
-          {children &&
-            children.map((child) => (
-              <Link key={child.label} py={2} href={child.href ?? '#'}>
-                {child.label}
-              </Link>
-            ))}
-        </Stack>
-      </Collapse>
-    </Stack>
+    <Flex
+      py={2}
+      as={Link}
+      href={href ?? '#'}
+      onClick={onClick}
+      justify={'space-between'}
+      align={'center'}
+      _hover={{
+        textDecoration: 'none',
+      }}
+    >
+      <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
+        {label}
+      </Text>
+    </Flex>
   );
 };
-
-interface NavItem {
-  label: string;
-  subLabel?: string;
-  children?: Array<NavItem>;
-  href?: string;
-}
-
-const NAV_ITEMS: Array<NavItem> = [
-  {
-    label: 'Brawlhalla',
-    href: 'brawlhalla',
-  },
-  {
-    label: 'Chess',
-    href: 'chess',
-  },
-  {
-    label: 'Rocket League',
-    href: 'rocket-league',
-  },
-];

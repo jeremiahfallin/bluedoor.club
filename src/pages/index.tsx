@@ -1,17 +1,75 @@
-import { trpc } from '../utils/trpc';
-import { NextPageWithLayout } from './_app';
-import { inferProcedureInput } from '@trpc/server';
-import type { AppRouter } from '~/server/routers/_app';
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  SimpleGrid,
+  VStack,
+} from '@chakra-ui/react';
+import { GetStaticProps } from 'next';
+import { trpc } from '~/utils/trpc';
 
-const IndexPage: NextPageWithLayout = () => {
-  const utils = trpc.useContext();
+interface Game {
+  id: string;
+  name: string;
+  imageUrl: string;
+}
+
+interface League {
+  id: string;
+  name: string;
+  gameId: string;
+}
+
+interface IndexProps {
+  games: Game[];
+  leagues: League[];
+}
+
+const IndexPage: React.FC<IndexProps> = () => {
+  const gamesQuery = trpc.game.list.useQuery();
+  const leaguesQuery = trpc.league.list.useQuery();
+
+  if (gamesQuery.isLoading || leaguesQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <>
-      <h1>Welcome to the Blue Door eSports league!</h1>
+    <Container maxW="container.xl">
+      <VStack spacing={8} py={8}>
+        <VStack spacing={4}>
+          <Heading>Welcome to the eSports Leagues Platform</Heading>
+          <Text>
+            Join and compete in your favorite games&apos; leagues today!
+          </Text>
+          <Button colorScheme="blue">Explore Games</Button>
+        </VStack>
 
-      <hr />
-    </>
+        <VStack align="start" spacing={4} w="full">
+          <Heading size="lg">Featured Games</Heading>
+          <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+            {gamesQuery?.data?.map((game) => (
+              <Box key={game.id} borderWidth={1} borderRadius="md" p={4}>
+                <Heading size="md">{game.name}</Heading>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </VStack>
+
+        <VStack align="start" spacing={4} w="full">
+          <Heading size="lg">Featured Leagues</Heading>
+          <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+            {leaguesQuery?.data?.map((league) => (
+              <Box key={league.id} borderWidth={1} borderRadius="md" p={4}>
+                <Heading size="md">{league.name}</Heading>
+                <Text>Game ID: {league.gameId}</Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </VStack>
+      </VStack>
+    </Container>
   );
 };
 

@@ -12,7 +12,7 @@ import {
   TableContainer,
 } from '@chakra-ui/react';
 import { trpc } from '~/utils/trpc';
-import { LeaguesWithMatches } from '~/server/routers/league';
+import { League } from '@prisma/client';
 
 const colors = [
   'red',
@@ -25,6 +25,34 @@ const colors = [
   'purple',
   'pink',
 ];
+
+interface LeagueWithMatches extends League {
+  matches: {
+    id: number;
+    date: Date;
+    blueTeam: {
+      name: string;
+    };
+    blueScore: number;
+    redTeam: {
+      name: string;
+    };
+    redScore: number;
+  }[];
+}
+
+interface Match {
+  id: number;
+  date: Date;
+  blueTeam: {
+    name: string;
+  };
+  blueScore: number;
+  redTeam: {
+    name: string;
+  };
+  redScore: number;
+}
 
 const weekNumber = (date: Date) => {
   const d = new Date(
@@ -49,7 +77,7 @@ function TimeDisplay({ date }: { date: Date }) {
 }
 
 export default function Schedule({ game }: { game: string }) {
-  const leagueQuery = trpc.league.list.useQuery({ game });
+  const leagueQuery = trpc.league.getBySlug.useQuery(game);
 
   if (leagueQuery.error) {
     return (
@@ -64,7 +92,7 @@ export default function Schedule({ game }: { game: string }) {
     return <>Loading...</>;
   }
 
-  const data = leagueQuery.data.leagues[0] as any as LeaguesWithMatches;
+  const data = leagueQuery.data as LeagueWithMatches;
 
   return (
     <Suspense fallback={null}>
@@ -82,22 +110,22 @@ export default function Schedule({ game }: { game: string }) {
               </Tr>
             </Thead>
             <Tbody>
-              {data.matches.map((league: any) => {
+              {data.matches.map((match: Match) => {
                 // color background based on week number
                 return (
                   <Tr
-                    key={league.id}
+                    key={match.id}
                     background={`${
-                      colors[weekNumber(league.date) % colors.length]
+                      colors[weekNumber(match.date) % colors.length]
                     }.700`}
                   >
                     <Td>
-                      <TimeDisplay date={league.date} />
+                      <TimeDisplay date={match.date} />
                     </Td>
-                    <Td>{league.blueTeam.name}</Td>
-                    <Td>{league.blueScore}</Td>
-                    <Td>{league.redTeam.name}</Td>
-                    <Td>{league.redScore}</Td>
+                    <Td>{match.blueTeam.name}</Td>
+                    <Td>{match.blueScore}</Td>
+                    <Td>{match.redTeam.name}</Td>
+                    <Td>{match.redScore}</Td>
                   </Tr>
                 );
               })}

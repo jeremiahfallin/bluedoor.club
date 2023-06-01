@@ -1,21 +1,22 @@
 import Head from 'next/head';
-import { ReactNode } from 'react';
 import { Box } from '@chakra-ui/react';
-
 import NavBar from './NavBar';
 
-type DefaultLayoutProps = { children: ReactNode };
+interface LayoutProps {
+  children: React.ReactNode;
+}
 
-export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
+export const DefaultLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
       <Head>
-        <title>Prisma Starter</title>
+        <title>BlueDoor Esports</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <NavBar />
-      <Box as="main">{children}</Box>
+      <Box h="100%">
+        <NavBar />
+        <Box h="max-content">{children}</Box>
+      </Box>
     </>
   );
 };

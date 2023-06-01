@@ -10,11 +10,84 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Necessary for Next auth
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  discriminator String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(USER)
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  club      Club?    @relation(fields: [clubId], references: [id])
+  clubId    String?
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model Club {
+  id    String @id @default(uuid())
+  name  String
+  slug  String @unique
+  users User[]
+  teams Team[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
 model Team {
   id       String @id @default(uuid())
   name     String
   slug     String @unique
-  users    User[]
   league   League @relation(fields: [leagueId], references: [id])
   leagueId String
 
@@ -22,18 +95,8 @@ model Team {
   updatedAt         DateTime @default(now()) @updatedAt
   matchesAsBlueTeam Match[]  @relation(name: "blueTeam")
   matchesAsRedTeam  Match[]  @relation(name: "redTeam")
-}
-
-model User {
-  id     String  @id @default(uuid())
-  name   String
-  email  String  @unique
-  slug   String  @unique
-  team   Team?   @relation(fields: [teamId], references: [id])
-  teamId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  club              Club?    @relation(fields: [clubId], references: [id])
+  clubId            String?
 }
 
 model Game {
