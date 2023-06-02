@@ -2,6 +2,7 @@
 import { VStack, Heading, Box, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
+import { LeagueWithTeams } from '~/server/services/leagueService';
 
 const LeagueTeamsPage = () => {
   const router = useRouter();
@@ -10,6 +11,8 @@ const LeagueTeamsPage = () => {
   const teamsQuery = trpc.league.getTeamsByLeagueSlug.useQuery(leagueSlug);
 
   if (!leagueSlug) return null;
+
+  const league = teamsQuery.data as LeagueWithTeams;
 
   return (
     <VStack spacing={4}>
@@ -22,7 +25,7 @@ const LeagueTeamsPage = () => {
       )}
       {teamsQuery.data && (
         <VStack spacing={4} w="100%">
-          {teamsQuery.data.teams.map((team) => (
+          {league.teams.map((team) => (
             <Box
               key={team.id}
               p={4}

@@ -77,3 +77,8 @@ export async function updateLeague(input: {
 export async function deleteLeague(id: string): Promise<void> {
   await prisma.league.delete({ where: { id } });
 }
+
+const leagueWithTeams = Prisma.validator<Prisma.LeagueArgs>()({
+  include: { teams: true },
+});
+export type LeagueWithTeams = Prisma.LeagueGetPayload<typeof leagueWithTeams>;
