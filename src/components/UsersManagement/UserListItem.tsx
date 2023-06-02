@@ -32,7 +32,9 @@ const UserListItem: React.FC<UserListItemProps> = ({ user, onUserUpdate }) => {
   });
 
   const handleUpdateUser = () => {
-    updateUserMutation.mutate({ id: user.id, role: updatedUserRole });
+    if (updatedUserRole === 'ADMIN' || updatedUserRole === 'USER') {
+      updateUserMutation.mutate({ id: user.id, role: updatedUserRole });
+    }
   };
 
   const handleDeleteUser = () => {
