@@ -7,7 +7,7 @@ export const gameRouter = router({
     const games = await gameService.getAllGames();
     return games;
   }),
-  getById: publicProcedure.input(z.number()).query(async ({ input }) => {
+  getById: publicProcedure.input(z.string()).query(async ({ input }) => {
     const game = await gameService.getGameById(input);
     return game;
   }),
@@ -19,7 +19,7 @@ export const gameRouter = router({
     .input(
       z.object({
         name: z.string(),
-        // Add other game properties as needed
+        slug: z.string(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -27,19 +27,17 @@ export const gameRouter = router({
       return newGame;
     }),
   update: publicProcedure
-
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
         name: z.string(),
-        // Add other game properties as needed
       }),
     )
     .mutation(async ({ input }) => {
       const updatedGame = await gameService.updateGame(input);
       return updatedGame;
     }),
-  delete: publicProcedure.input(z.number()).mutation(async ({ input }) => {
+  delete: publicProcedure.input(z.string()).mutation(async ({ input }) => {
     await gameService.deleteGame(input);
     return true;
   }),

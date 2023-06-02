@@ -1,6 +1,7 @@
-import { VStack, Heading, Box, Image, Text } from '@chakra-ui/react';
+import { VStack, Heading, Box, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
+import { GameWithLeagues } from '~/server/services/gameService';
 
 const GamePage = () => {
   const router = useRouter();
@@ -8,6 +9,8 @@ const GamePage = () => {
   const gameQuery = trpc.game.getBySlug.useQuery(gameSlug);
 
   if (!gameSlug) return null;
+
+  const game = gameQuery.data as GameWithLeagues;
 
   return (
     <VStack spacing={4}>
@@ -18,17 +21,11 @@ const GamePage = () => {
       {gameQuery.data && (
         <>
           <Heading as="h1" size="2xl">
-            {gameQuery.data.name} Leagues
+            {game.name} Leagues
           </Heading>
-          {gameQuery.data.imageUrl && (
-            <Image src={gameQuery.data.imageUrl} alt={gameQuery.data.name} />
-          )}
-          {gameQuery.data.description && (
-            <Text>{gameQuery.data.description}</Text>
-          )}
-          {gameQuery.data.leagues ? (
+          {game.leagues ? (
             <VStack spacing={4} w="100%">
-              {gameQuery.data.leagues.map((league) => (
+              {game.leagues.map((league) => (
                 <Box
                   key={league.id}
                   p={4}
@@ -45,8 +42,6 @@ const GamePage = () => {
                   <Heading as="h2" size="lg" mb={2}>
                     {league.name}
                   </Heading>
-                  {/* {game.imageUrl && <Image src={game.imageUrl} alt={game.name} />} */}
-                  {/* {game.description && <Text>{game.description}</Text>} */}
                 </Box>
               ))}
             </VStack>
