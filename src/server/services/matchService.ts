@@ -42,4 +42,72 @@ export async function getMatchById(id: string): Promise<Match | null> {
   return match;
 }
 
-// Add more service functions if needed, such as creating, updating, or deleting matches
+export async function createMatch(input: {
+  leagueId: string;
+  blueTeamId: string;
+  redTeamId: string;
+  blueScore?: number;
+  redScore?: number;
+  date: string;
+}): Promise<Match> {
+  const { leagueId, blueTeamId, redTeamId, blueScore, redScore, date } = input;
+  const match = await prisma.match.create({
+    data: {
+      league: { connect: { id: leagueId } },
+      blueTeam: { connect: { id: blueTeamId } },
+      redTeam: { connect: { id: redTeamId } },
+      blueScore,
+      redScore,
+      date,
+    },
+    include: {
+      blueTeam: {
+        include: {
+          users: true,
+        },
+      },
+      redTeam: {
+        include: {
+          users: true,
+        },
+      },
+    },
+  });
+
+  return match;
+}
+
+export async function updateMatch(input: {
+  id: string;
+  blueScore?: number;
+  redScore?: number;
+  date?: string;
+}): Promise<Match> {
+  const { id, blueScore, redScore, date } = input;
+  const match = await prisma.match.update({
+    where: { id },
+    data: {
+      blueScore,
+      redScore,
+      date,
+    },
+    include: {
+      blueTeam: {
+        include: {
+          users: true,
+        },
+      },
+      redTeam: {
+        include: {
+          users: true,
+        },
+      },
+    },
+  });
+
+  return match;
+}
+
+export async function deleteMatch(id: string): Promise<void> {
+  await prisma.match.delete({ where: { id } });
+}

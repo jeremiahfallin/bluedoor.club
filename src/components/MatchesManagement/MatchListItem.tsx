@@ -48,7 +48,7 @@ const MatchListItem: React.FC<MatchListItemProps> = ({
     <Box w="100%" p={4} borderWidth={1} borderRadius="lg">
       <HStack justifyContent="space-between">
         <Text>
-          {match.homeTeam} vs {match.awayTeam} ({match.date})
+          {match.blueTeam} vs {match.redTeam} ({match.date})
         </Text>
         <HStack>
           {/* Edit Match Button */}
