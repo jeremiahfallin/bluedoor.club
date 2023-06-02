@@ -18,7 +18,7 @@ type AppPropsWithLayout = AppProps & {
   session: any;
 };
 
-export const theme = extendTheme({
+const theme = extendTheme({
   config: {
     initialColorMode: 'dark',
   },
