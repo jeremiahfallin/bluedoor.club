@@ -18,8 +18,8 @@ interface ClubModalProps {
   onClose: () => void;
   clubName: string;
   setClubName: (name: string) => void;
-  clubSlug: string;
-  setClubSlug: (slug: string) => void;
+  clubSlug?: string;
+  setClubSlug?: (slug: string) => void;
   action: () => void;
   actionLabel: string;
   header: string;
