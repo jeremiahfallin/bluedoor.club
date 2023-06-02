@@ -18,8 +18,8 @@ interface MatchModalProps {
   onClose: () => void;
   match: {
     id: string;
-    blueTeam: string;
-    redTeam: string;
+    blueTeamId: string;
+    redTeamId: string;
     date: string;
     blueScore: string;
     redScore: string;
@@ -62,7 +62,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
             <Input
               id="homeTeam"
               name="homeTeam"
-              value={match.blueTeam}
+              value={match.blueTeamId}
               onChange={handleChange}
             />
           </FormControl>
@@ -71,7 +71,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
             <Input
               id="awayTeam"
               name="awayTeam"
-              value={match.redTeam}
+              value={match.redTeamId}
               onChange={handleChange}
             />
           </FormControl>

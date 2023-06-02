@@ -8,8 +8,8 @@ import MatchModal from './MatchModal'; // Import MatchModal component
 interface MatchListItemProps {
   match: {
     id: string;
-    blueTeam: string;
-    redTeam: string;
+    blueTeamId: string;
+    redTeamId: string;
     date: string;
     blueScore: string;
     redScore: string;
@@ -48,7 +48,7 @@ const MatchListItem: React.FC<MatchListItemProps> = ({
     <Box w="100%" p={4} borderWidth={1} borderRadius="lg">
       <HStack justifyContent="space-between">
         <Text>
-          {match.blueTeam} vs {match.redTeam} ({match.date})
+          {match.blueTeamId} vs {match.redTeamId} ({match.date})
         </Text>
         <HStack>
           {/* Edit Match Button */}
