@@ -20,7 +20,7 @@ import { Fragment } from 'react';
 
 export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure();
-  const { data: session } = useSession();
+  const { data: session }: { data: any } = useSession();
   const { data: games } = trpc.game.list.useQuery();
 
   const navItems = [
