@@ -21,8 +21,8 @@ interface MatchModalProps {
     blueTeamId: string;
     redTeamId: string;
     date: Date;
-    blueScore: number;
-    redScore: number;
+    blueScore: number | null;
+    redScore: number | null;
   };
   setMatch: (match: MatchModalProps['match']) => void;
   action: () => void;
@@ -90,7 +90,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
             <Input
               id="score"
               name="score"
-              value={match.blueScore}
+              value={match.blueScore || ''}
               onChange={handleChange}
             />
           </FormControl>
@@ -99,7 +99,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
             <Input
               id="score"
               name="score"
-              value={match.redScore}
+              value={match.redScore || ''}
               onChange={handleChange}
             />
           </FormControl>
