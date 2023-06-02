@@ -7,12 +7,15 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
+import { ClubById } from '~/server/services/clubService';
 
 const ClubPage = () => {
   const router = useRouter();
   const { clubId } = router.query as { clubId: string };
 
   const clubQuery = trpc.club.getById.useQuery(clubId);
+
+  const club = clubQuery.data as ClubById;
 
   if (!clubId) return null;
 
@@ -29,7 +32,7 @@ const ClubPage = () => {
           </Heading>
           <Text>Teams:</Text>
           <UnorderedList>
-            {clubQuery.data.teams.map((team: any) => (
+            {club.teams.map((team: any) => (
               <ListItem key={team.id}>{team.name}</ListItem>
             ))}
           </UnorderedList>

@@ -1,4 +1,4 @@
-import { Club, PrismaClient, Team } from '@prisma/client';
+import { Club, Prisma, PrismaClient, Team } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -59,3 +59,8 @@ export async function updateClub(
 export async function deleteClub(id: string): Promise<void> {
   await prisma.club.delete({ where: { id } });
 }
+
+const clubById = Prisma.validator<Prisma.ClubArgs>()({
+  include: { teams: true },
+});
+export type ClubById = Prisma.ClubGetPayload<typeof clubById>;
