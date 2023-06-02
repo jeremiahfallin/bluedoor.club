@@ -59,14 +59,20 @@ const ClubModal: React.FC<ClubModalProps> = ({
               value={clubName}
               onChange={(e) => {
                 setClubName(e.target.value);
-                setClubSlug(getAcronym(e.target.value));
+                if (setClubSlug) {
+                  setClubSlug(getAcronym(e.target.value));
+                }
               }}
             />
-            <FormLabel>Club Slug</FormLabel>
-            <Input
-              value={clubSlug}
-              onChange={(e) => setClubSlug(e.target.value)}
-            />
+            {setClubSlug && (
+              <>
+                <FormLabel>Club Slug</FormLabel>
+                <Input
+                  value={clubSlug}
+                  onChange={(e) => setClubSlug(e.target.value)}
+                />
+              </>
+            )}
           </FormControl>
         </ModalBody>
 
