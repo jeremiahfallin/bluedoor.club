@@ -42,3 +42,20 @@ export async function createClub(name: string, slug: string): Promise<Club> {
 
   return club;
 }
+
+export async function updateClub(
+  id: string,
+  name: string,
+  slug: string,
+): Promise<Club | null> {
+  const club = await prisma.club.update({
+    where: { id },
+    data: { name, slug },
+  });
+
+  return club;
+}
+
+export async function deleteClub(id: string): Promise<void> {
+  await prisma.club.delete({ where: { id } });
+}

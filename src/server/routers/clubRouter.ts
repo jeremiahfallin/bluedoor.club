@@ -36,4 +36,21 @@ export const clubRouter = router({
       const club = await clubService.createClub(name, slug);
       return club;
     }),
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        slug: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { id, name, slug } = input;
+      const club = await clubService.updateClub(id, name, slug);
+      return club;
+    }),
+  delete: publicProcedure.input(z.string()).mutation(async ({ input }) => {
+    await clubService.deleteClub(input);
+    return true;
+  }),
 });

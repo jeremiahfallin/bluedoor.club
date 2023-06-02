@@ -13,13 +13,15 @@ interface ClubListItemProps {
 const ClubListItem: React.FC<ClubListItemProps> = ({ club, onClubUpdate }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [updatedClubName, setUpdatedClubName] = useState(club.name);
-  const updateClubMutation = trpc.useMutation('club.update');
-  const deleteClubMutation = trpc.useMutation('club.delete');
+  const [updatedClubSlug, setUpdatedClubSlug] = useState(club.slug);
+  const updateClubMutation = trpc.club.update.useMutation();
+  const deleteClubMutation = trpc.club.delete.useMutation();
 
   const handleUpdateClub = async () => {
     await updateClubMutation.mutateAsync({
       id: club.id,
-      updates: { name: updatedClubName },
+      name: updatedClubName,
+      slug: updatedClubSlug,
     });
     onClubUpdate();
     onClose();
@@ -47,6 +49,8 @@ const ClubListItem: React.FC<ClubListItemProps> = ({ club, onClubUpdate }) => {
         onClose={onClose}
         clubName={updatedClubName}
         setClubName={setUpdatedClubName}
+        clubSlug={updatedClubSlug}
+        setClubSlug={setUpdatedClubSlug}
         action={handleUpdateClub}
         actionLabel="Edit"
         header="Edit Club"
