@@ -1,9 +1,12 @@
 import { VStack, Heading, Box, Text } from '@chakra-ui/react';
+import { MatchWithTeams } from '~/server/services/matchService';
 
 import { trpc } from '~/utils/trpc';
 
 const MatchesPage = () => {
   const matchesQuery = trpc.match.list.useQuery();
+
+  const matches = matchesQuery.data as MatchWithTeams[];
 
   return (
     <VStack spacing={4}>
@@ -16,7 +19,7 @@ const MatchesPage = () => {
       )}
       {matchesQuery.data && (
         <VStack spacing={4} w="100%">
-          {matchesQuery.data.map((match) => (
+          {matches.map((match) => (
             <Box
               key={match.id}
               p={4}
