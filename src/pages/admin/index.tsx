@@ -19,7 +19,7 @@ import MatchesManagement from '~/components/MatchesManagement';
 
 const AdminPanel = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, status }: { data: any; status: any } = useSession();
   const isAdmin = status === 'authenticated' && session?.user?.role === 'ADMIN';
 
   useEffect(() => {
