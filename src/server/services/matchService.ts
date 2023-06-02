@@ -1,5 +1,5 @@
 // src/server/services/matchService.ts
-import { PrismaClient, Match } from '@prisma/client';
+import { PrismaClient, Match, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -79,3 +79,8 @@ export async function updateMatch(input: {
 export async function deleteMatch(id: string): Promise<void> {
   await prisma.match.delete({ where: { id } });
 }
+
+const matchWithTeams = Prisma.validator<Prisma.MatchArgs>()({
+  include: { blueTeam: true, redTeam: true },
+});
+export type MatchWithTeams = Prisma.MatchGetPayload<typeof matchWithTeams>;
