@@ -10,9 +10,9 @@ interface MatchListItemProps {
     id: string;
     blueTeamId: string;
     redTeamId: string;
-    date: string;
-    blueScore: string;
-    redScore: string;
+    date: Date;
+    blueScore: number;
+    redScore: number;
   };
   onMatchUpdate: () => void;
 }
@@ -48,7 +48,7 @@ const MatchListItem: React.FC<MatchListItemProps> = ({
     <Box w="100%" p={4} borderWidth={1} borderRadius="lg">
       <HStack justifyContent="space-between">
         <Text>
-          {match.blueTeamId} vs {match.redTeamId} ({match.date})
+          {match.blueTeamId} vs {match.redTeamId} ({match.date.toISOString()})
         </Text>
         <HStack>
           {/* Edit Match Button */}

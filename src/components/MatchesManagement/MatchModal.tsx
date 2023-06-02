@@ -20,9 +20,9 @@ interface MatchModalProps {
     id: string;
     blueTeamId: string;
     redTeamId: string;
-    date: string;
-    blueScore: string;
-    redScore: string;
+    date: Date;
+    blueScore: number;
+    redScore: number;
   };
   setMatch: (match: MatchModalProps['match']) => void;
   action: () => void;
@@ -81,7 +81,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
               id="date"
               name="date"
               type="date"
-              value={match.date}
+              value={match.date.toISOString().split('T')[0]}
               onChange={handleChange}
             />
           </FormControl>

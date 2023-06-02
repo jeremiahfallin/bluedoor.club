@@ -33,7 +33,7 @@ export const matchRouter = router({
         id: z.string(),
         blueTeamScore: z.number().optional(),
         redTeamScore: z.number().optional(),
-        date: z.string().optional(),
+        date: z.date().optional(),
       }),
     )
     .mutation(async ({ input }) => {

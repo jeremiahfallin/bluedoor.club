@@ -6,16 +6,8 @@ const prisma = new PrismaClient();
 export async function getMatches(): Promise<Match[]> {
   const matches = await prisma.match.findMany({
     include: {
-      blueTeam: {
-        include: {
-          users: true,
-        },
-      },
-      redTeam: {
-        include: {
-          users: true,
-        },
-      },
+      blueTeam: true,
+      redTeam: true,
     },
   });
 
@@ -26,16 +18,8 @@ export async function getMatchById(id: string): Promise<Match | null> {
   const match = await prisma.match.findUnique({
     where: { id },
     include: {
-      blueTeam: {
-        include: {
-          users: true,
-        },
-      },
-      redTeam: {
-        include: {
-          users: true,
-        },
-      },
+      blueTeam: true,
+      redTeam: true,
     },
   });
 
@@ -61,16 +45,8 @@ export async function createMatch(input: {
       date,
     },
     include: {
-      blueTeam: {
-        include: {
-          users: true,
-        },
-      },
-      redTeam: {
-        include: {
-          users: true,
-        },
-      },
+      blueTeam: true,
+      redTeam: true,
     },
   });
 
@@ -81,7 +57,7 @@ export async function updateMatch(input: {
   id: string;
   blueScore?: number;
   redScore?: number;
-  date?: string;
+  date?: Date;
 }): Promise<Match> {
   const { id, blueScore, redScore, date } = input;
   const match = await prisma.match.update({
@@ -92,16 +68,8 @@ export async function updateMatch(input: {
       date,
     },
     include: {
-      blueTeam: {
-        include: {
-          users: true,
-        },
-      },
-      redTeam: {
-        include: {
-          users: true,
-        },
-      },
+      blueTeam: true,
+      redTeam: true,
     },
   });
 
