@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         Thanks for letting us know what you want to see!
-  - type: markdown
+  - type: textarea
     id: summary
     attributes:
       label: Summary
@@ -18,7 +18,7 @@ body:
       value: "Users love stats. As a user I would love to see more stats."
     validations:
       required: true
-  - type: markdown
+  - type: textarea
     id: acceptance-criteria
     attributes:
       label: Acceptance Criteria
@@ -27,7 +27,7 @@ body:
       value: "More stats are on the website."
     validations:
       required: false
-  - type: markdown
+  - type: textarea
     id: notes
     attributes:
       label: Notes
