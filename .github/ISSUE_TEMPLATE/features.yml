@@ -1,7 +1,7 @@
 name: Feature Request
 description: Request a feature
 title: "[Feature]: "
-labels: ["bug", "triage"]
+labels: ["feature"]
 assignees:
   - jeremiahfallin
 body:
