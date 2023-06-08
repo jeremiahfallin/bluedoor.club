@@ -1,0 +1,38 @@
+name: Feature Request
+description: Request a feature
+title: "[Feature]: "
+labels: ["bug", "triage"]
+assignees:
+  - jeremiahfallin
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for letting us know what you want to see!
+  - type: markdown
+    id: summary
+    attributes:
+      label: Summary
+      description: 
+      placeholder: I'd like to see...
+      value: "Users love stats. As a user I would love to see more stats."
+    validations:
+      required: true
+  - type: markdown
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know we hit the mark?
+      placeholder: The feature should be implemented.
+      value: "More stats are on the website."
+    validations:
+      required: false
+  - type: markdown
+    id: notes
+    attributes:
+      label: Notes
+      description: Anything else we should know?
+      placeholder: Extra details.
+      value: 
+    validations:
+      required: false
