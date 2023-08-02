@@ -1,6 +1,7 @@
 // components/LeagueModal.tsx
 import {
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Input,
@@ -11,6 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
 } from '@chakra-ui/react';
 
 interface LeagueModalProps {
@@ -21,6 +23,15 @@ interface LeagueModalProps {
   action: () => void;
   actionLabel: string;
   header: string;
+  games?: {
+    id: string;
+    name: string;
+  }[];
+  setGameId: (game: string) => void;
+  seasonStart: Date;
+  setSeasonStart: (date: Date) => void;
+  seasonEnd: Date;
+  setSeasonEnd: (date: Date) => void;
 }
 
 const LeagueModal: React.FC<LeagueModalProps> = ({
@@ -31,6 +42,12 @@ const LeagueModal: React.FC<LeagueModalProps> = ({
   action,
   actionLabel,
   header,
+  games,
+  setGameId,
+  seasonStart,
+  setSeasonStart,
+  seasonEnd,
+  setSeasonEnd,
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -40,10 +57,39 @@ const LeagueModal: React.FC<LeagueModalProps> = ({
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
-            <FormLabel>League Name</FormLabel>
+            <Flex direction="column" gap={2}>
+              <FormLabel m={0}>League Name</FormLabel>
+              <Input
+                value={leagueName}
+                onChange={(e) => setLeagueName(e.target.value)}
+              />
+              <FormLabel m={0}>Game</FormLabel>
+              <Select
+                placeholder="Select game"
+                onChange={(e) => setGameId(e.target.value)}
+              >
+                {games?.map((game) => (
+                  <option key={game.id} value={game.id}>
+                    {game.name}
+                  </option>
+                ))}
+              </Select>
+            </Flex>
+            <FormLabel htmlFor="startDate">Start Date</FormLabel>
             <Input
-              value={leagueName}
-              onChange={(e) => setLeagueName(e.target.value)}
+              id="startDate"
+              name="startDate"
+              type="date"
+              value={seasonStart.toISOString().split('T')[0]}
+              onChange={(e) => setSeasonStart(new Date(e.target.value))}
+            />
+            <FormLabel htmlFor="endDate">End Date</FormLabel>
+            <Input
+              id="endDate"
+              name="endDate"
+              type="date"
+              value={seasonEnd.toISOString().split('T')[0]}
+              onChange={(e) => setSeasonEnd(new Date(e.target.value))}
             />
           </FormControl>
         </ModalBody>

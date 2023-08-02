@@ -44,7 +44,10 @@ export const userRouter = router({
       if (!user) {
         return null;
       }
-      const uniqueLeagues = user?.club.teams
+      if (!user.club) {
+        return user;
+      }
+      const uniqueLeagues = user?.club?.teams
         .map((team) => {
           return team.league;
         })

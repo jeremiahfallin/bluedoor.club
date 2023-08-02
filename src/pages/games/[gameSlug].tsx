@@ -1,4 +1,5 @@
 import { VStack, Heading, Box, Text } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/next-js';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
 import { GameWithLeagues } from '~/server/services/gameService';
@@ -13,7 +14,7 @@ const GamePage = () => {
   const game = gameQuery.data as GameWithLeagues;
 
   return (
-    <VStack spacing={4}>
+    <VStack spacing={4} padding={4}>
       {gameQuery.isLoading && <Text>Loading game...</Text>}
       {gameQuery.error && (
         <Text>Error loading game: {gameQuery.error.message}</Text>
@@ -32,15 +33,12 @@ const GamePage = () => {
                   borderWidth={1}
                   borderRadius="lg"
                   boxShadow="lg"
-                  cursor="pointer"
-                  w="100%"
-                  _hover={{ bg: 'gray.100' }}
-                  onClick={() =>
-                    router.push(`/games/${gameSlug}/leagues/${league.slug}`)
-                  }
+                  _hover={{ bg: 'gray.900' }}
                 >
                   <Heading as="h2" size="lg" mb={2}>
-                    {league.name}
+                    <Link href={`/games/${gameSlug}/leagues/${league.slug}`}>
+                      {league.name}
+                    </Link>
                   </Heading>
                 </Box>
               ))}

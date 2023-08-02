@@ -91,12 +91,13 @@ model Team {
   league   League @relation(fields: [leagueId], references: [id])
   leagueId String
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @default(now()) @updatedAt
-  matchesAsBlueTeam Match[]  @relation(name: "blueTeam")
-  matchesAsRedTeam  Match[]  @relation(name: "redTeam")
-  club              Club?    @relation(fields: [clubId], references: [id])
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @default(now()) @updatedAt
+  matchesAsBlueTeam Match[]        @relation(name: "blueTeam")
+  matchesAsRedTeam  Match[]        @relation(name: "redTeam")
+  club              Club?          @relation(fields: [clubId], references: [id])
   clubId            String?
+  Availability      Availability[]
 }
 
 model Game {
@@ -107,16 +108,20 @@ model Game {
 }
 
 model League {
-  id    String @id @default(uuid())
-  name  String
-  slug  String @unique
-  teams Team[]
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  seasonStart DateTime @default(now())
+  seasonEnd   DateTime @default(now())
+  teams       Team[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  matches   Match[]
-  game      Game?    @relation(fields: [gameId], references: [id])
-  gameId    String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @default(now()) @updatedAt
+  matches          Match[]
+  game             Game?          @relation(fields: [gameId], references: [id])
+  gameId           String?
+  availability     Availability[]
+  minimumMatchTime Int?
 }
 
 model Match {
@@ -130,7 +135,31 @@ model Match {
   date       DateTime
   league     League   @relation(fields: [leagueId], references: [id])
   leagueId   String
+  isPlayoff  Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Availability {
+  id       String           @id @default(uuid())
+  team     Team             @relation(fields: [teamId], references: [id])
+  teamId   String
+  league   League           @relation(fields: [leagueId], references: [id])
+  leagueId String
+  times    AvailableTimes[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([teamId, leagueId])
+}
+
+model AvailableTimes {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  availability   Availability @relation(fields: [availabilityId], references: [id])
+  availabilityId String
+  startTime      DateTime
+  endTime        DateTime
 }

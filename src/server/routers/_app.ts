@@ -7,10 +7,12 @@ import { gameRouter } from './gameRouter';
 import { leagueRouter } from './leagueRouter';
 import { matchRouter } from './matchRouter';
 import { userRouter } from './userRouter';
+import { availabilityRouter } from './availabilityRouter';
 
 export const appRouter = router({
   healthcheck: publicProcedure.query(() => 'yay!'),
 
+  availability: availabilityRouter,
   club: clubRouter,
   game: gameRouter,
   league: leagueRouter,

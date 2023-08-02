@@ -58,19 +58,19 @@ const MatchModal: React.FC<MatchModalProps> = ({
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
-            <FormLabel htmlFor="homeTeam">Home Team</FormLabel>
+            <FormLabel htmlFor="blueTeam">Blue Team</FormLabel>
             <Input
-              id="homeTeam"
-              name="homeTeam"
+              id="blueTeam"
+              name="blueTeam"
               value={match.blueTeamId}
               onChange={handleChange}
             />
           </FormControl>
           <FormControl mt={4}>
-            <FormLabel htmlFor="awayTeam">Away Team</FormLabel>
+            <FormLabel htmlFor="redTeam">Red Team</FormLabel>
             <Input
-              id="awayTeam"
-              name="awayTeam"
+              id="redTeam"
+              name="redTeam"
               value={match.redTeamId}
               onChange={handleChange}
             />

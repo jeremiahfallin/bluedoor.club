@@ -1,18 +1,17 @@
 // pages/leagues/index.tsx
 import { VStack, Heading, Box, Text } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/next-js';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
 
 const LeaguesPage = () => {
   const router = useRouter();
-  const leaguesQuery = trpc.league.list.useQuery();
-
-  const handleLeagueClick = (leagueSlug: string) => {
-    router.push(`/leagues/${leagueSlug}`);
-  };
+  const { gameSlug } = router.query as { gameSlug: string };
+  const leaguesQuery = trpc.league.getByGameSlug.useQuery(gameSlug);
+  console.log(leaguesQuery.data);
 
   return (
-    <VStack spacing={4}>
+    <VStack spacing={4} p={4}>
       <Heading as="h1" size="2xl">
         Current Leagues
       </Heading>
@@ -21,24 +20,26 @@ const LeaguesPage = () => {
         <Text>Error loading leagues: {leaguesQuery.error.message}</Text>
       )}
       {leaguesQuery.data && (
-        <VStack spacing={4} w="100%">
+        <VStack spacing={4}>
           {leaguesQuery.data.map((league: any) => (
-            <Box
+            <Link
               key={league.id}
-              p={4}
-              borderWidth={1}
-              borderRadius="lg"
-              boxShadow="lg"
-              cursor="pointer"
+              href={`/games/${gameSlug}/leagues/${league.slug}`}
               w="100%"
-              _hover={{ bg: 'gray.100' }}
-              onClick={() => handleLeagueClick(league.slug)}
             >
-              <Heading as="h2" size="lg" mb={2}>
-                {league.name}
-              </Heading>
-              <Text>Game: {league.game.name}</Text>
-            </Box>
+              <Box
+                p={4}
+                borderWidth={1}
+                borderRadius="lg"
+                boxShadow="lg"
+                _hover={{ bg: 'gray.900' }}
+              >
+                <Heading as="h2" size="lg" mb={2}>
+                  {league.name}
+                </Heading>
+                <Text>Game: {league.name}</Text>
+              </Box>
+            </Link>
           ))}
         </VStack>
       )}

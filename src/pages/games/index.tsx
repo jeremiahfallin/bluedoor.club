@@ -1,26 +1,21 @@
-import { VStack, Heading, Box, Image, Text } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
+import { VStack, Heading, Box, Text } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/next-js';
 import { trpc } from '~/utils/trpc';
 
 const GamesPage = () => {
-  const router = useRouter();
   const gamesQuery = trpc.game.list.useQuery();
 
-  const handleGameClick = (gameSlug: string) => {
-    router.push(`/games/${gameSlug}`);
-  };
-
   return (
-    <VStack spacing={4}>
+    <VStack spacing={4} padding={4}>
       <Heading as="h1" size="2xl">
-        Available Games
+        Current Games
       </Heading>
       {gamesQuery.isLoading && <Text>Loading games...</Text>}
       {gamesQuery.error && (
         <Text>Error loading games: {gamesQuery.error.message}</Text>
       )}
       {gamesQuery.data && (
-        <VStack spacing={4} w="100%">
+        <VStack>
           {gamesQuery.data.map((game) => (
             <Box
               key={game.id}
@@ -31,13 +26,10 @@ const GamesPage = () => {
               cursor="pointer"
               w="100%"
               _hover={{ bg: 'gray.100' }}
-              onClick={() => handleGameClick(game.slug)}
             >
               <Heading as="h2" size="lg" mb={2}>
-                {game.name}
+                <Link href={`/games/${game.slug}`}>{game.name}</Link>
               </Heading>
-              {/* {game.imageUrl && <Image src={game.imageUrl} alt={game.name} />} */}
-              {/* {game.description && <Text>{game.description}</Text>} */}
             </Box>
           ))}
         </VStack>

@@ -168,6 +168,16 @@ async function main() {
     },
     update: {},
   });
+  await prisma.game.upsert({
+    where: {
+      slug: 'ssbu',
+    },
+    create: {
+      name: 'Super Smash Bros. Ultimate',
+      slug: 'ssbu',
+    },
+    update: {},
+  });
 }
 
 main()
