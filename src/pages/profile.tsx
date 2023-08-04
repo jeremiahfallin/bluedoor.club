@@ -30,8 +30,10 @@ import {
 } from '@chakra-ui/react';
 import { trpc } from '~/utils/trpc';
 import { useState } from 'react';
+import { Link } from '@chakra-ui/next-js';
 
 const Sidebar = ({ leagues, teams }: { leagues: any; teams: any }) => {
+  console.log(leagues);
   return (
     <Box w="240px" bg={'gray.900'} borderRadius={'xl'} p={2}>
       <Accordion allowToggle>
@@ -41,14 +43,17 @@ const Sidebar = ({ leagues, teams }: { leagues: any; teams: any }) => {
               <Box as="span" fontWeight="bold" flex="1" textAlign={'left'}>
                 Leagues
               </Box>
-
               <AccordionIcon />
             </AccordionButton>
           </h2>
           <AccordionPanel>
             {leagues?.map((league: any) => (
               <Text key={league.id} ml={3}>
-                {league.name}
+                <Link
+                  href={`/games/${league?.game?.slug}/league/${league.slug}`}
+                >
+                  {league.name}
+                </Link>
               </Text>
             ))}
           </AccordionPanel>
@@ -149,7 +154,7 @@ const UserProfile = () => {
     },
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || upcomingLeaguesQuery.isLoading) return <div>Loading...</div>;
 
   if (error) return <div>An error has occurred: {error.message}</div>;
 
