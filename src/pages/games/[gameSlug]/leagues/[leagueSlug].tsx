@@ -1,3 +1,4 @@
+// pages/games/[gameSlug]/leagues/[leagueSlug].tsx
 import { useRouter } from 'next/router';
 import Schedule from '~/components/Schedule';
 
