@@ -1,5 +1,4 @@
 const createTitle = (event: any) => {
-  console.log('event', event);
   const titleStart = event.start.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',

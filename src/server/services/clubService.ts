@@ -2,6 +2,15 @@ import { Club, Prisma, PrismaClient, Team } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+export async function markInviteRedeemed(id: string): Promise<void> {
+  await prisma.invite.update({
+    where: { id },
+    data: {
+      redeemedAt: new Date(),
+    },
+  });
+}
+
 export async function getAllClubs(): Promise<Club[]> {
   const clubs = await prisma.club.findMany({
     include: { teams: true },
@@ -33,6 +42,15 @@ export async function getTeamByClubAndTeamId(
   }
 
   return team;
+}
+
+export async function joinClub(clubId: string, userId: string): Promise<Club> {
+  const club = await prisma.club.update({
+    where: { id: clubId },
+    data: { users: { connect: { id: userId } } },
+  });
+
+  return club;
 }
 
 export async function createClub(name: string, slug: string): Promise<Club> {

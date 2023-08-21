@@ -82,6 +82,17 @@ model Club {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  invite    Invite[]
+}
+
+model Invite {
+  id         String    @id @default(uuid())
+  club       Club?     @relation(fields: [clubId], references: [id])
+  clubId     String? // Can link to a specific club if needed
+  expiresAt  DateTime?
+  redeemedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
 }
 
 model Team {
@@ -97,7 +108,7 @@ model Team {
   matchesAsRedTeam  Match[]        @relation(name: "redTeam")
   club              Club?          @relation(fields: [clubId], references: [id])
   clubId            String?
-  Availability      Availability[]
+  availability      Availability[]
 }
 
 model Game {
@@ -118,8 +129,8 @@ model League {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @default(now()) @updatedAt
   matches          Match[]
-  game             Game?          @relation(fields: [gameId], references: [id])
-  gameId           String?
+  game             Game           @relation(fields: [gameId], references: [id])
+  gameId           String
   availability     Availability[]
   minimumMatchTime Int?
 }

@@ -3,21 +3,62 @@ import { Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function getAllLeagues(): Promise<League[]> {
-  return await prisma.league.findMany({
-    include: {
-      game: true,
-    },
-  });
+export enum LeagueType {
+  CURRENT,
+  UPCOMING,
+  PAST,
 }
 
-export async function getUpcomingLeagues(): Promise<League[]> {
+export async function getLeagues(
+  leagueType?: LeagueType,
+  start?: Date,
+  end?: Date,
+): Promise<League[]> {
+  let whereClause;
+
+  const currentDate = new Date();
+
+  if (leagueType !== undefined) {
+    switch (leagueType) {
+      case LeagueType.CURRENT:
+        whereClause = {
+          seasonStart: {
+            lte: currentDate,
+          },
+          seasonEnd: {
+            gte: currentDate,
+          },
+        };
+        break;
+      case LeagueType.UPCOMING:
+        whereClause = {
+          seasonStart: {
+            gte: currentDate,
+          },
+        };
+        break;
+      case LeagueType.PAST:
+        whereClause = {
+          seasonEnd: {
+            lte: currentDate,
+          },
+        };
+        break;
+    }
+
+    // Optionally, use the start and end parameters if provided
+    if (start) {
+      whereClause = whereClause || {};
+      whereClause.seasonStart = whereClause.seasonStart || { gte: start };
+    }
+    if (end) {
+      whereClause = whereClause || {};
+      whereClause.seasonEnd = whereClause.seasonEnd || { lte: end };
+    }
+  }
+
   return await prisma.league.findMany({
-    where: {
-      seasonStart: {
-        gt: new Date(),
-      },
-    },
+    where: whereClause,
     include: {
       game: true,
     },
@@ -79,7 +120,6 @@ export async function createLeague(input: {
   seasonStart: Date;
   seasonEnd: Date;
 }): Promise<League> {
-  console.log(input);
   return await prisma.league.create({
     data: {
       name: input.name,
@@ -142,4 +182,8 @@ export async function joinLeague(input: {
 const leagueWithTeams = Prisma.validator<Prisma.LeagueArgs>()({
   include: { teams: true },
 });
+const leagueWithGame = Prisma.validator<Prisma.LeagueArgs>()({
+  include: { game: true },
+});
 export type LeagueWithTeams = Prisma.LeagueGetPayload<typeof leagueWithTeams>;
+export type LeagueWithGame = Prisma.LeagueGetPayload<typeof leagueWithGame>;

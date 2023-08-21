@@ -1,4 +1,11 @@
-import { Box, Button, Heading, IconButton, Select } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Heading,
+  IconButton,
+  Select,
+  useToast,
+} from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight, Target } from 'react-feather';
 import moment from 'moment';
 import 'moment-timezone';
@@ -50,7 +57,17 @@ export default function Toolbar({
   defaultTZ,
   events,
 }: any) {
-  const availabilityMutation = trpc.availability.update.useMutation();
+  const toast = useToast();
+  const availabilityMutation = trpc.availability.update.useMutation({
+    onSuccess: () => {
+      toast({
+        title: 'Availability updated.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
   const { messages } = localizer;
 
   return (

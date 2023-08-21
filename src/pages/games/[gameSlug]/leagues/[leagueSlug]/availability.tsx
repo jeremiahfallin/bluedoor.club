@@ -46,7 +46,7 @@ export default function AvailabilityPage() {
 
   const { data: league } = trpc.league.getBySlug.useQuery(leagueSlug);
 
-  if (!league) {
+  if (!league || !session?.user?.id) {
     return null;
   }
   return (

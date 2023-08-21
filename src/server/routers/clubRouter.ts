@@ -24,6 +24,20 @@ export const clubRouter = router({
       const team = await clubService.getTeamByClubAndTeamId(clubId, teamId);
       return team;
     }),
+  join: publicProcedure
+    .input(
+      z.object({
+        clubId: z.string(),
+        inviteId: z.string(),
+        userId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { clubId, userId } = input;
+      const club = await clubService.joinClub(clubId, userId);
+      await clubService.markInviteRedeemed(input.inviteId);
+      return club;
+    }),
   create: publicProcedure
     .input(
       z.object({

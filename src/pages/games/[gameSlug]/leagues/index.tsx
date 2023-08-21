@@ -8,7 +8,6 @@ const LeaguesPage = () => {
   const router = useRouter();
   const { gameSlug } = router.query as { gameSlug: string };
   const leaguesQuery = trpc.league.getByGameSlug.useQuery(gameSlug);
-  console.log(leaguesQuery.data);
 
   return (
     <VStack spacing={4} p={4}>

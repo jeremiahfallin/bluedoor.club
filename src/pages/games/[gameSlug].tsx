@@ -14,28 +14,27 @@ import { trpc } from '~/utils/trpc';
 import { GameWithLeagues } from '~/server/services/gameService';
 
 const LeagueCard = ({ league }: { league: any }) => {
-  console.log(league);
   return (
     <Box borderWidth={1} borderRadius="md" p={4}>
       <Link
         href={`/games/${league?.game?.slug}/leagues/${league.slug}`}
         color={'blue.500'}
       >
-        <Center>
+        <Center py={2}>
           <Heading size="md">{league.name}</Heading>
         </Center>
       </Link>
       <Flex justifyContent={'space-between'}>
         <Box>Game:</Box>
-        <Box>{league?.game?.name}</Box>
+        <Box textAlign="right">{league?.game?.name}</Box>
       </Flex>
       <Flex justifyContent={'space-between'}>
         <Box>Starts:</Box>
-        <Box>{league?.seasonStart.toDateString()}</Box>
+        <Box textAlign="right">{league?.seasonStart.toDateString()}</Box>
       </Flex>
       <Flex justifyContent={'space-between'}>
         <Box>Ends:</Box>
-        <Box>{league?.seasonEnd.toDateString()}</Box>
+        <Box textAlign="right">{league?.seasonEnd.toDateString()}</Box>
       </Flex>
     </Box>
   );

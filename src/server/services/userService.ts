@@ -35,7 +35,11 @@ export async function getProfileByUserId(
         include: {
           teams: {
             include: {
-              league: true,
+              league: {
+                include: {
+                  game: true,
+                },
+              },
             },
           },
         },

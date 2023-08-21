@@ -134,8 +134,6 @@ const AvailabilitySelector = ({
       };
     }, [timezone, seasonStart, events]);
 
-  console.log('myEvents', myEvents);
-
   return (
     <>
       <Center>

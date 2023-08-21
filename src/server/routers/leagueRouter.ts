@@ -4,11 +4,25 @@ import * as leagueService from '../services/leagueService';
 
 export const leagueRouter = router({
   list: publicProcedure.query(async () => {
-    const leagues = await leagueService.getAllLeagues();
+    const leagues = await leagueService.getLeagues();
+    return leagues;
+  }),
+  current: publicProcedure.query(async () => {
+    const leagues = await leagueService.getLeagues(
+      leagueService.LeagueType.CURRENT,
+    );
     return leagues;
   }),
   upcoming: publicProcedure.query(async () => {
-    const leagues = await leagueService.getUpcomingLeagues();
+    const leagues = await leagueService.getLeagues(
+      leagueService.LeagueType.UPCOMING,
+    );
+    return leagues;
+  }),
+  previous: publicProcedure.query(async () => {
+    const leagues = await leagueService.getLeagues(
+      leagueService.LeagueType.PAST,
+    );
     return leagues;
   }),
   getById: publicProcedure.input(z.string()).query(async ({ input }) => {

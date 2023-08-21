@@ -33,3 +33,5 @@ export default trpcNext.createNextApiHandler({
   //   // ...
   // },
 });
+
+export { createContext, appRouter };

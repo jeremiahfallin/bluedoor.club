@@ -2,7 +2,6 @@ import {
   Box,
   Container,
   Heading,
-  Text,
   SimpleGrid,
   VStack,
   Link,
@@ -10,6 +9,9 @@ import {
   Center,
 } from '@chakra-ui/react';
 import { trpc } from '~/utils/trpc';
+import { appRouter, createContext } from './api/trpc/[trpc]';
+import { createServerSideHelpers } from '@trpc/react-query/server';
+import superjson from 'superjson';
 
 interface Game {
   id: string;
@@ -29,7 +31,6 @@ interface IndexProps {
 }
 
 const LeagueCard = ({ league }: { league: any }) => {
-  console.log(league);
   return (
     <Box borderWidth={1} borderRadius="md" p={4}>
       <Link
@@ -58,13 +59,15 @@ const LeagueCard = ({ league }: { league: any }) => {
 
 const IndexPage: React.FC<IndexProps> = () => {
   const gamesQuery = trpc.game.list.useQuery();
-  const leaguesQuery = trpc.league.list.useQuery();
+  const leaguesQuery = trpc.league.current.useQuery();
   const upcomingLeaguesQuery = trpc.league.upcoming.useQuery();
+  const previousLeaguesQuery = trpc.league.previous.useQuery();
 
   if (
     gamesQuery.isLoading ||
     leaguesQuery.isLoading ||
-    upcomingLeaguesQuery.isLoading
+    upcomingLeaguesQuery.isLoading ||
+    previousLeaguesQuery.isLoading
   ) {
     return <div>Loading...</div>;
   }
@@ -73,14 +76,14 @@ const IndexPage: React.FC<IndexProps> = () => {
 
   return (
     <Container maxW="container.xl">
-      <VStack spacing={8} py={8}>
+      <VStack spacing={8} py={8} w="100%">
         <VStack spacing={4}>
           <Heading>Welcome to the Bluedoor Club</Heading>
         </VStack>
 
         <VStack align="start" spacing={4} w="full">
           <Heading size="lg">Current Leagues</Heading>
-          <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+          <SimpleGrid columns={[1, 2, 3]} spacing={4} w="100%">
             {leaguesQuery?.data?.map((league) => (
               <LeagueCard key={league.id} league={league} />
             ))}
@@ -88,8 +91,16 @@ const IndexPage: React.FC<IndexProps> = () => {
         </VStack>
         <VStack align="start" spacing={4} w="full">
           <Heading size="lg">Upcoming Leagues</Heading>
-          <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+          <SimpleGrid columns={[1, 2, 3]} spacing={4} w="100%">
             {upcoming?.map((league: any) => (
+              <LeagueCard key={league.id} league={league} />
+            ))}
+          </SimpleGrid>
+        </VStack>
+        <VStack align="start" spacing={4} w="full">
+          <Heading size="lg">Previous Leagues</Heading>
+          <SimpleGrid columns={[1, 2, 3]} spacing={4} w="100%">
+            {previousLeaguesQuery?.data?.map((league) => (
               <LeagueCard key={league.id} league={league} />
             ))}
           </SimpleGrid>
@@ -100,3 +111,23 @@ const IndexPage: React.FC<IndexProps> = () => {
 };
 
 export default IndexPage;
+
+export const getStaticProps = async () => {
+  const ssg = createServerSideHelpers({
+    router: appRouter,
+    ctx: await createContext(),
+    transformer: superjson,
+  });
+
+  await ssg.game.list.prefetch();
+  await ssg.league.current.prefetch();
+  await ssg.league.previous.prefetch();
+  await ssg.league.upcoming.prefetch();
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+    revalidate: 300,
+  };
+};

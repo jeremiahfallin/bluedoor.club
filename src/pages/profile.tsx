@@ -33,7 +33,6 @@ import { useState } from 'react';
 import { Link } from '@chakra-ui/next-js';
 
 const Sidebar = ({ leagues, teams }: { leagues: any; teams: any }) => {
-  console.log(leagues);
   return (
     <Box w="240px" bg={'gray.900'} borderRadius={'xl'} p={2}>
       <Accordion allowToggle>
@@ -50,7 +49,7 @@ const Sidebar = ({ leagues, teams }: { leagues: any; teams: any }) => {
             {leagues?.map((league: any) => (
               <Text key={league.id} ml={3}>
                 <Link
-                  href={`/games/${league?.game?.slug}/league/${league.slug}`}
+                  href={`/games/${league?.game?.slug}/leagues/${league.slug}`}
                 >
                   {league.name}
                 </Link>
