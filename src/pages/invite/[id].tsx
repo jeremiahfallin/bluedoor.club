@@ -11,7 +11,7 @@ export default function InvitePage() {
   const joinClubMutation = trpc.club.join.useMutation();
 
   const handleJoinClub = async () => {
-    const sessionId = session?.user?.id as any
+    const sessionId = session?.user?.id as any;
     if (id && invite?.clubId && sessionId) {
       await joinClubMutation.mutateAsync({
         inviteId: id as string,
