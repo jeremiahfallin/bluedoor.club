@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
 
 export default function InvitePage() {
-  const { data: session } as any = useSession();
+  const { data: session }: any = useSession();
   const router = useRouter();
   const { id } = router.query;
   const { data: invite } = trpc.invite.get.useQuery({ id: id as string });
