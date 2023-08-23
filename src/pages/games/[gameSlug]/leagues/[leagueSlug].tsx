@@ -1,10 +1,13 @@
 // pages/games/[gameSlug]/leagues/[leagueSlug].tsx
+import { useState } from 'react';
 import NextError from 'next/error';
-import { Box, Button, Flex, Heading } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Schedule from '~/components/Schedule';
 import { trpc } from '~/utils/trpc';
 import { League } from '@prisma/client';
+import { JoinLeagueModal } from '~/pages/profile';
+import { useSession } from 'next-auth/react';
 
 interface LeagueWithMatches extends League {
   matches: {
@@ -22,10 +25,21 @@ interface LeagueWithMatches extends League {
 }
 
 export default function IndexPage() {
+  const [teamName, setTeamName] = useState('');
   const router = useRouter();
+  const { data: session } = useSession();
+  const profileQuery = trpc.user.profile.useQuery(session?.user?.id);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { leagueSlug } = router.query as { leagueSlug: string };
   const leagueQuery = trpc.league.getBySlug.useQuery(leagueSlug);
+  const joinLeagueMutation = trpc.league.join.useMutation({
+    onSuccess: () => {
+      onClose();
+      setTeamName('');
+    },
+  });
   const data = leagueQuery.data as LeagueWithMatches;
+  console.log(session);
 
   if (leagueQuery.error) {
     return (
@@ -54,13 +68,21 @@ export default function IndexPage() {
             {data.seasonStart.toDateString()} to {data.seasonEnd.toDateString()}
           </Heading>
         </Box>
-        <Button
-          onClick={() => {
-            router.push(`/games/${leagueSlug}/leagues/${leagueSlug}/create`);
-          }}
-        >
-          Join League
-        </Button>
+        {profileQuery && profileQuery.data && profileQuery.data.clubId && (
+          <>
+            <JoinLeagueModal
+              isOpen={isOpen}
+              onClose={onClose}
+              leagueId={data.id}
+              leagueName={data.name}
+              clubId={profileQuery.data.clubId}
+              teamName={teamName}
+              setTeamName={setTeamName}
+              joinLeagueMutation={joinLeagueMutation}
+            />
+            <Button onClick={onOpen}>Join League</Button>
+          </>
+        )}
       </Flex>
       <Schedule data={data} game={leagueSlug} />
     </Box>

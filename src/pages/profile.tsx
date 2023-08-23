@@ -243,4 +243,5 @@ const UserProfile = () => {
   );
 };
 
+export { JoinLeagueModal };
 export default UserProfile;
