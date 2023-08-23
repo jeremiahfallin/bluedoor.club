@@ -1,5 +1,5 @@
 import { Suspense, useState, useEffect } from 'react';
-import NextError from 'next/error';
+
 import {
   Box,
   Link,
@@ -12,8 +12,6 @@ import {
   TableCaption,
   TableContainer,
 } from '@chakra-ui/react';
-import { trpc } from '~/utils/trpc';
-import { League } from '@prisma/client';
 
 const colors = [
   'red',
@@ -26,21 +24,6 @@ const colors = [
   'purple',
   'pink',
 ];
-
-interface LeagueWithMatches extends League {
-  matches: {
-    id: number;
-    date: Date;
-    blueTeam: {
-      name: string;
-    };
-    blueScore: number;
-    redTeam: {
-      name: string;
-    };
-    redScore: number;
-  }[];
-}
 
 interface Match {
   id: number;
@@ -86,24 +69,7 @@ function TimeDisplay({ date }: { date: Date }) {
   return <>{time}</>;
 }
 
-export default function Schedule({ game }: { game: string }) {
-  const leagueQuery = trpc.league.getBySlug.useQuery(game);
-
-  if (leagueQuery.error) {
-    return (
-      <NextError
-        title={leagueQuery.error.message}
-        statusCode={leagueQuery.error.data?.httpStatus ?? 500}
-      />
-    );
-  }
-
-  if (leagueQuery.status !== 'success') {
-    return <>Loading...</>;
-  }
-
-  const data = leagueQuery.data as LeagueWithMatches;
-
+export default function Schedule({ data, game }: { data: any; game: string }) {
   return (
     <Suspense fallback={null}>
       <Box as="main">
