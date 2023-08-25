@@ -99,14 +99,14 @@ model Team {
   id       String @id @default(uuid())
   name     String
   slug     String @unique
-  league   League @relation(fields: [leagueId], references: [id])
+  league   League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
   leagueId String
 
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @default(now()) @updatedAt
   matchesAsBlueTeam Match[]        @relation(name: "blueTeam")
   matchesAsRedTeam  Match[]        @relation(name: "redTeam")
-  club              Club?          @relation(fields: [clubId], references: [id])
+  club              Club?          @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId            String?
   availability      Availability[]
 }
@@ -154,7 +154,7 @@ model Match {
 
 model Availability {
   id       String           @id @default(uuid())
-  team     Team             @relation(fields: [teamId], references: [id])
+  team     Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId   String
   league   League           @relation(fields: [leagueId], references: [id])
   leagueId String

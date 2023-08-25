@@ -27,7 +27,7 @@ interface LeagueWithMatches extends League {
 export default function IndexPage() {
   const [teamName, setTeamName] = useState('');
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session }: any = useSession();
   const profileQuery = trpc.user.profile.useQuery(session?.user?.id);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { leagueSlug } = router.query as { leagueSlug: string };
