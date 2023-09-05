@@ -73,6 +73,7 @@ const IndexPage: React.FC<IndexProps> = () => {
   }
 
   const upcoming = upcomingLeaguesQuery.data;
+  const previous = previousLeaguesQuery.data;
 
   return (
     <Container maxW="container.xl">
@@ -100,7 +101,7 @@ const IndexPage: React.FC<IndexProps> = () => {
         <VStack align="start" spacing={4} w="full">
           <Heading size="lg">Previous Leagues</Heading>
           <SimpleGrid columns={[1, 2, 3]} spacing={4} w="100%">
-            {previousLeaguesQuery?.data?.map((league) => (
+            {previous?.map((league) => (
               <LeagueCard key={league.id} league={league} />
             ))}
           </SimpleGrid>

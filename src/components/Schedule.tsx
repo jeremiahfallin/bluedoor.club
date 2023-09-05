@@ -38,15 +38,6 @@ interface Match {
   redScore: number;
 }
 
-const rulesets: { [char: string]: string } = {
-  brawlhalla:
-    'https://docs.google.com/document/d/15-GDjGaiyWGPaBBGZMqPRrQSFmf7P-ww/edit',
-  chess:
-    'https://docs.google.com/document/d/1ouT_7Fe7QV3hOwQNH8XcPmZ2pI_UngGc/edit',
-  'rocket-league':
-    'https://docs.google.com/document/d/1K_VVnifGRR9m47-vY5ILNDdcgc_KETvK/edit',
-};
-
 const weekNumber = (date: Date) => {
   const d = new Date(
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
@@ -69,15 +60,12 @@ function TimeDisplay({ date }: { date: Date }) {
   return <>{time}</>;
 }
 
-export default function Schedule({ data, game }: { data: any; game: string }) {
+export default function Schedule({ data }: { data: any }) {
   return (
     <Suspense fallback={null}>
       <Box as="main">
         <TableContainer>
           <Table>
-            <TableCaption>
-              Season schedule, <Link href={rulesets[game]}>ruleset</Link>
-            </TableCaption>
             <Thead>
               <Tr>
                 <Th>Time</Th>

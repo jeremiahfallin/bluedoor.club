@@ -1,9 +1,21 @@
 // pages/games/[gameSlug]/leagues/[leagueSlug].tsx
 import { useState } from 'react';
 import NextError from 'next/error';
-import { Box, Button, Flex, Heading, useDisclosure } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Schedule from '~/components/Schedule';
+import LeagueParticipants from '~/components/LeagueParticipants';
 import { trpc } from '~/utils/trpc';
 import { League } from '@prisma/client';
 import { JoinLeagueModal } from '~/pages/profile';
@@ -39,7 +51,6 @@ export default function IndexPage() {
     },
   });
   const data = leagueQuery.data as LeagueWithMatches;
-  console.log(session);
 
   if (leagueQuery.error) {
     return (
@@ -84,7 +95,20 @@ export default function IndexPage() {
           </>
         )}
       </Flex>
-      <Schedule data={data} game={leagueSlug} />
+      <Tabs>
+        <TabList>
+          <Tab>Teams</Tab>
+          <Tab>Schedule</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <LeagueParticipants leagueId={data.id} />
+          </TabPanel>
+          <TabPanel>
+            <Schedule data={data} />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </Box>
   );
 }
