@@ -1,14 +1,15 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
 import 'moment-timezone';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Box, Center, Heading, IconButton } from '@chakra-ui/react';
+import { Box, Center, Heading, IconButton, useToast } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Toolbar from './Toolbar';
 import createTitle from '~/utils/createTitle';
+import { trpc } from '~/utils/trpc';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 // Setup the localizer by providing the moment Object
@@ -27,8 +28,26 @@ const AvailabilitySelector = ({
   seasonEnd: Date;
   initialEvents: any;
 }) => {
+  const toast = useToast();
   const [events, setEvents] = useState(initialEvents) as any;
   const [timezone, setTimezone] = useState(defaultTZ);
+
+  const availabilityMutation = trpc.availability.update.useMutation({
+    onSuccess: () => {
+      toast({
+        title: 'Availability updated.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
+
+  const eventsRef = useRef<any>(initialEvents);
+
+  useEffect(() => {
+    eventsRef.current = events;
+  }, [events]);
 
   const newEvent = useCallback(
     (event: any) => {
@@ -114,7 +133,6 @@ const AvailabilitySelector = ({
 
   const removeEvent = useCallback(
     (event: any) => {
-      console.log(event);
       setEvents((prev: any) => {
         return prev.filter((ev: any) => ev.id !== event.id);
       });
@@ -122,17 +140,28 @@ const AvailabilitySelector = ({
     [setEvents],
   );
 
-  const { defaultDate, getNow, localizer, myEvents, scrollToTime } =
-    useMemo(() => {
-      moment.tz.setDefault(timezone);
+  const { defaultDate, getNow, localizer, scrollToTime } = useMemo(() => {
+    moment.tz.setDefault(timezone);
+    return {
+      defaultDate: moment(seasonStart).toDate(),
+      getNow: () => moment().toDate(),
+      localizer: momentLocalizer(moment),
+      scrollToTime: moment().toDate(),
+    };
+  }, [timezone, seasonStart]);
+
+  const handleUpdate = () => {
+    const eventsToSave = eventsRef.current.map((event: any) => {
       return {
-        defaultDate: moment(seasonStart).toDate(),
-        getNow: () => moment().toDate(),
-        localizer: momentLocalizer(moment),
-        myEvents: [...events],
-        scrollToTime: moment().toDate(),
+        startTime: moment(event.start).toDate(),
+        endTime: moment(event.end).toDate(),
       };
-    }, [timezone, seasonStart, events]);
+    });
+    availabilityMutation.mutate({
+      id: availabilityId,
+      times: eventsToSave,
+    });
+  };
 
   return (
     <>
@@ -162,15 +191,14 @@ const AvailabilitySelector = ({
             ),
             toolbar: (props) => (
               <Toolbar
-                events={myEvents}
                 {...{
                   ...props,
                   seasonStart,
                   seasonEnd,
                   timezone,
                   setTimezone,
-                  availabilityId,
                   defaultTZ,
+                  handleUpdate,
                 }}
               />
             ),
@@ -179,7 +207,7 @@ const AvailabilitySelector = ({
           defaultView="week"
           draggableAccessor={() => true}
           eventPropGetter={eventPropGetter}
-          events={myEvents}
+          events={events}
           getNow={getNow}
           onEventDrop={handleEvent}
           onEventResize={handleEvent}

@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react';
 
 export default function LeagueParticipants({ data }: { data: any }) {
-  console.log(data);
   return (
     <Box as="main">
       <TableContainer>
