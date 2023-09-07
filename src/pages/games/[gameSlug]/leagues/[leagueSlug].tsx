@@ -102,7 +102,7 @@ export default function IndexPage() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <LeagueParticipants leagueId={data.id} />
+            <LeagueParticipants data={data} />
           </TabPanel>
           <TabPanel>
             <Schedule data={data} />

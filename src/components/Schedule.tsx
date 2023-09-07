@@ -1,15 +1,12 @@
 import { Suspense, useState, useEffect } from 'react';
-
 import {
   Box,
-  Link,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from '@chakra-ui/react';
 

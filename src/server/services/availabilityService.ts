@@ -43,3 +43,16 @@ export async function getAvailability(
   });
   return availability;
 }
+
+export async function getAvailabilityByTeamIdAndLeagueId(
+  teamId: string,
+  leagueId: string,
+): Promise<Availability | null> {
+  const availability = await prisma.availability.upsert({
+    where: { teamId_leagueId: { teamId: teamId, leagueId } },
+    create: { teamId: teamId, leagueId },
+    update: {},
+    include: { times: true },
+  });
+  return availability;
+}

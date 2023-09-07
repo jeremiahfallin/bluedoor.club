@@ -98,7 +98,7 @@ model Invite {
 model Team {
   id       String @id @default(uuid())
   name     String
-  slug     String @unique
+  slug     String
   league   League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
   leagueId String
 

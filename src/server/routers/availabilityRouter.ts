@@ -42,4 +42,20 @@ export const availabilityRouter = router({
       );
       return availability;
     }),
+  getByTeamIdAndLeagueId: publicProcedure
+    .input(
+      z.object({
+        teamId: z.string(),
+        leagueId: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { teamId, leagueId } = input;
+      const availability =
+        await availabilityService.getAvailabilityByTeamIdAndLeagueId(
+          teamId,
+          leagueId,
+        );
+      return availability;
+    }),
 });

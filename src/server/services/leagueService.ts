@@ -88,6 +88,11 @@ export async function getLeagueBySlug(slug: string): Promise<League | null> {
           date: Prisma.SortOrder.asc,
         },
       },
+      teams: {
+        include: {
+          club: true,
+        },
+      },
     },
   });
 }
