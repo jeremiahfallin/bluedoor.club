@@ -5,7 +5,14 @@ import moment from 'moment';
 import 'moment-timezone';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Box, Center, Heading, IconButton, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Heading,
+  IconButton,
+  useToast,
+} from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Toolbar from './Toolbar';
 import createTitle from '~/utils/createTitle';
@@ -163,8 +170,13 @@ const AvailabilitySelector = ({
     });
   };
 
+  const handlePrint = () => {
+    console.log(events);
+  };
+
   return (
     <>
+      <Button onClick={() => handlePrint()}>Print</Button>
       <Center>
         <Heading p={4}>Set your {name} availabiliy</Heading>
       </Center>
