@@ -23,7 +23,7 @@ export async function updateAvailability(
 export async function getAvailability(
   userId: string,
   leagueId: string,
-): Promise<Availability | null> {
+): Promise<Availability[] | null> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: { club: { include: { teams: true } } },
@@ -35,6 +35,9 @@ export async function getAvailability(
     (team) => team.leagueId === leagueId,
   );
   if (myTeams?.length === 0) {
+    throw new Error('Team not found');
+  }
+  if (!myTeams) {
     throw new Error('Team not found');
   }
   const availability = Promise.all(
