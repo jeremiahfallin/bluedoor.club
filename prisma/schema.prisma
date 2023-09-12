@@ -109,6 +109,9 @@ model Team {
   club              Club?          @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId            String?
   availability      Availability[]
+
+  @@unique([leagueId, name])
+  @@unique([leagueId, slug])
 }
 
 model Game {
