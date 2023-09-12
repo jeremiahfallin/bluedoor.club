@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import Scheduler from '~/components/Scheduler';
@@ -7,33 +7,23 @@ import { trpc } from '~/utils/trpc';
 import createTitle from '~/utils/createTitle';
 
 function Wrapper({ league, userId }: { league: any; userId: string }) {
-  const { data: availability } = trpc.availability.get.useQuery({
+  const availabilityQuery = trpc.availability.get.useQuery({
     leagueId: league?.id,
     userId: userId,
   }) as any;
+  const availability = availabilityQuery.data;
   const [teamIndex, setTeamIndex] = useState(0);
 
-  const availabilityId = availability ? availability[teamIndex].id : null;
-  const initialEvents = availability
-    ? availability[teamIndex].times.map((time: any) => ({
-        id: time.id,
-        title: createTitle({
-          start: new Date(time?.startTime),
-          end: new Date(time?.endTime),
-        }),
-        start: time.startTime,
-        end: time.endTime,
-      }))
-    : [];
-
-  if (!availabilityId) {
+  if (!availability) {
     return null;
   }
+
+  console.log(availability);
   const teams = availability.map((a: any) => a.team);
   return (
     <Scheduler
-      availabilityId={availabilityId}
-      initialEvents={initialEvents}
+      availabilityRefetch={availabilityQuery.refetch}
+      availability={availability}
       name={league.name}
       seasonStart={league.seasonStart}
       seasonEnd={league.seasonEnd}

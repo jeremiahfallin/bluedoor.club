@@ -5,14 +5,7 @@ import moment from 'moment';
 import 'moment-timezone';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import {
-  Box,
-  Button,
-  Center,
-  Heading,
-  IconButton,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Center, Heading, IconButton, useToast } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Toolbar from './Toolbar';
 import createTitle from '~/utils/createTitle';
@@ -23,27 +16,55 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 const defaultTZ = moment.tz.guess();
 
 const AvailabilitySelector = ({
-  availabilityId,
+  availabilityRefetch,
+  availability,
   name,
   seasonStart,
   seasonEnd,
-  initialEvents,
   teams,
   teamIndex,
   setTeamIndex,
 }: {
-  availabilityId: string;
+  availabilityRefetch: any;
+  availability: any;
   name: string;
   seasonStart: Date;
   seasonEnd: Date;
-  initialEvents: any;
   teams: any;
   teamIndex: number;
   setTeamIndex: any;
 }) => {
   const toast = useToast();
-  const [events, setEvents] = useState(initialEvents) as any;
+  const [events, setEvents] = useState(
+    availability
+      ? availability[teamIndex]?.times?.map((time: any) => ({
+          id: time.id,
+          title: createTitle({
+            start: new Date(time?.startTime),
+            end: new Date(time?.endTime),
+          }),
+          start: time.startTime,
+          end: time.endTime,
+        }))
+      : [],
+  ) as any;
   const [timezone, setTimezone] = useState(defaultTZ);
+
+  useEffect(() => {
+    setEvents(
+      availability
+        ? availability[teamIndex]?.times?.map((time: any) => ({
+            id: time.id,
+            title: createTitle({
+              start: new Date(time?.startTime),
+              end: new Date(time?.endTime),
+            }),
+            start: time.startTime,
+            end: time.endTime,
+          }))
+        : [],
+    );
+  }, [teamIndex]);
 
   const availabilityMutation = trpc.availability.update.useMutation({
     onSuccess: () => {
@@ -53,10 +74,23 @@ const AvailabilitySelector = ({
         duration: 3000,
         isClosable: true,
       });
+      availabilityRefetch();
     },
   });
 
-  const eventsRef = useRef<any>(initialEvents);
+  const eventsRef = useRef<any>(
+    availability
+      ? availability[teamIndex]?.times?.map((time: any) => ({
+          id: time.id,
+          title: createTitle({
+            start: new Date(time?.startTime),
+            end: new Date(time?.endTime),
+          }),
+          start: time.startTime,
+          end: time.endTime,
+        }))
+      : [],
+  );
 
   useEffect(() => {
     eventsRef.current = events;
@@ -171,7 +205,7 @@ const AvailabilitySelector = ({
       };
     });
     availabilityMutation.mutate({
-      id: availabilityId,
+      id: availability[teamIndex].id,
       times: eventsToSave,
     });
   };
@@ -204,9 +238,6 @@ const AvailabilitySelector = ({
             ),
             toolbar: (props) => (
               <Toolbar
-                teams={teams}
-                teamIndex={teamIndex}
-                setTeamIndex={setTeamIndex}
                 {...{
                   ...props,
                   seasonStart,
@@ -215,6 +246,9 @@ const AvailabilitySelector = ({
                   setTimezone,
                   defaultTZ,
                   handleUpdate,
+                  setTeamIndex,
+                  teamIndex,
+                  teams,
                 }}
               />
             ),
