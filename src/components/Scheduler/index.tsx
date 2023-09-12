@@ -28,12 +28,18 @@ const AvailabilitySelector = ({
   seasonStart,
   seasonEnd,
   initialEvents,
+  teams,
+  teamIndex,
+  setTeamIndex,
 }: {
   availabilityId: string;
   name: string;
   seasonStart: Date;
   seasonEnd: Date;
   initialEvents: any;
+  teams: any;
+  teamIndex: number;
+  setTeamIndex: any;
 }) => {
   const toast = useToast();
   const [events, setEvents] = useState(initialEvents) as any;
@@ -198,6 +204,9 @@ const AvailabilitySelector = ({
             ),
             toolbar: (props) => (
               <Toolbar
+                teams={teams}
+                teamIndex={teamIndex}
+                setTeamIndex={setTeamIndex}
                 {...{
                   ...props,
                   seasonStart,
@@ -206,9 +215,6 @@ const AvailabilitySelector = ({
                   setTimezone,
                   defaultTZ,
                   handleUpdate,
-                  teams,
-                  setTeam,
-                  team,
                 }}
               />
             ),

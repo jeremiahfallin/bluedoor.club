@@ -25,10 +25,11 @@ function Wrapper({ league, userId }: { league: any; userId: string }) {
         end: time.endTime,
       }))
     : [];
-  const teams = league.teams;
+
   if (!availabilityId) {
     return null;
   }
+  const teams = availability.map((a: any) => a.team);
   return (
     <Scheduler
       availabilityId={availabilityId}
@@ -36,6 +37,9 @@ function Wrapper({ league, userId }: { league: any; userId: string }) {
       name={league.name}
       seasonStart={league.seasonStart}
       seasonEnd={league.seasonEnd}
+      teams={teams}
+      teamIndex={teamIndex}
+      setTeamIndex={setTeamIndex}
     />
   );
 }

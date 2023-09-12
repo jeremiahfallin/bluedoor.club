@@ -52,7 +52,7 @@ const theme = extendTheme({
         width: '100% !important',
       },
       '.rbc-timeslot-group': {
-        minHeight: '120px !important',
+        minHeight: '60px !important',
       },
       '.rbc-label': {
         color: 'whiteAlpha.900',
