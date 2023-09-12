@@ -35,6 +35,24 @@ function TimezoneSelect({
   );
 }
 
+function TeamSelect({ teams, setTeam, team }: any) {
+  const onChange = ({ target: { value } }: any) => setTeam(value);
+  return (
+    <Select
+      className="form-control"
+      style={{ width: 200, display: 'inline-block' }}
+      value={team}
+      onChange={onChange}
+    >
+      {teams.map((c: any, idx: any) => (
+        <option key={idx} value={c.id}>
+          {c.name}
+        </option>
+      ))}
+    </Select>
+  );
+}
+
 export default function Toolbar({
   // date, // available, but not used here
   label,
@@ -47,6 +65,9 @@ export default function Toolbar({
   setTimezone,
   handleUpdate,
   defaultTZ,
+  teams,
+  setTeam,
+  team,
 }: any) {
   const { messages } = localizer;
 
@@ -54,6 +75,7 @@ export default function Toolbar({
     <Box className="rbc-toolbar">
       <Box>
         <TimezoneSelect {...{ timezone, setTimezone, defaultTZ }} />
+        <TeamSelect {...{ teams, setTeam, team }} />
       </Box>
 
       <Heading as="h3" size="lg" className="rbc-toolbar-label">

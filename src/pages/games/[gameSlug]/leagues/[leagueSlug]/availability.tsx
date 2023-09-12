@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import Scheduler from '~/components/Scheduler';
@@ -10,10 +11,11 @@ function Wrapper({ league, userId }: { league: any; userId: string }) {
     leagueId: league?.id,
     userId: userId,
   }) as any;
+  const [teamIndex, setTeamIndex] = useState(0);
 
-  const availabilityId = availability ? availability.id : null;
+  const availabilityId = availability ? availability[teamIndex].id : null;
   const initialEvents = availability
-    ? availability.times.map((time: any) => ({
+    ? availability[teamIndex].times.map((time: any) => ({
         id: time.id,
         title: createTitle({
           start: new Date(time?.startTime),
@@ -23,6 +25,7 @@ function Wrapper({ league, userId }: { league: any; userId: string }) {
         end: time.endTime,
       }))
     : [];
+  const teams = league.teams;
   if (!availabilityId) {
     return null;
   }

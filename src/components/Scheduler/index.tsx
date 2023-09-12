@@ -170,13 +170,8 @@ const AvailabilitySelector = ({
     });
   };
 
-  const handlePrint = () => {
-    console.log(events);
-  };
-
   return (
     <>
-      <Button onClick={() => handlePrint()}>Print</Button>
       <Center>
         <Heading p={4}>Set your {name} availabiliy</Heading>
       </Center>
@@ -211,6 +206,9 @@ const AvailabilitySelector = ({
                   setTimezone,
                   defaultTZ,
                   handleUpdate,
+                  teams,
+                  setTeam,
+                  team,
                 }}
               />
             ),
