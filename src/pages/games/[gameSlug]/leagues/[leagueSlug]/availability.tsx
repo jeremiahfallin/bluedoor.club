@@ -18,7 +18,6 @@ function Wrapper({ league, userId }: { league: any; userId: string }) {
     return null;
   }
 
-  console.log(availability);
   const teams = availability.map((a: any) => a.team);
   return (
     <Scheduler
