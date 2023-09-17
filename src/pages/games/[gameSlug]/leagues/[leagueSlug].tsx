@@ -12,6 +12,7 @@ import {
   Tab,
   TabPanel,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Schedule from '~/components/Schedule';
@@ -38,6 +39,7 @@ interface LeagueWithMatches extends League {
 
 export default function IndexPage() {
   const [teamName, setTeamName] = useState('');
+  const toast = useToast();
   const router = useRouter();
   const { data: session }: any = useSession();
   const profileQuery = trpc.user.profile.useQuery(session?.user?.id);
@@ -48,6 +50,22 @@ export default function IndexPage() {
     onSuccess: () => {
       onClose();
       setTeamName('');
+      leagueQuery.refetch();
+      toast({
+        title: 'Joined league! Make sure to set your availability.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: () => {
+      toast({
+        title:
+          'Unable to add team to league. Please make sure your team name is unique.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     },
   });
   const data = leagueQuery.data as LeagueWithMatches;
@@ -91,7 +109,9 @@ export default function IndexPage() {
               setTeamName={setTeamName}
               joinLeagueMutation={joinLeagueMutation}
             />
-            <Button onClick={onOpen}>Join League</Button>
+            <Button onClick={onOpen} colorScheme="blue">
+              Join League
+            </Button>
           </>
         )}
       </Flex>

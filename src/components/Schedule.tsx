@@ -8,6 +8,7 @@ import {
   Th,
   Td,
   TableContainer,
+  Text,
 } from '@chakra-ui/react';
 
 const colors = [
@@ -58,6 +59,9 @@ function TimeDisplay({ date }: { date: Date }) {
 }
 
 export default function Schedule({ data }: { data: any }) {
+  if (data.matches.length === 0) {
+    return <Text>No matches scheduled yet. Check back later!</Text>;
+  }
   return (
     <Suspense fallback={null}>
       <Box as="main">

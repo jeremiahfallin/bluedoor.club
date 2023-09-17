@@ -170,13 +170,13 @@ const AvailabilitySelector = ({
     });
   };
 
-  const handlePrint = () => {
-    console.log(events);
+  const handleUpdateTeamIndex = (index: number) => {
+    setTeamIndex(index);
+    setEvents(teams[index].times);
   };
 
   return (
     <>
-      <Button onClick={() => handlePrint()}>Print</Button>
       <Center>
         <Heading p={4}>Set your {name} availabiliy</Heading>
       </Center>

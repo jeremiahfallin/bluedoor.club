@@ -27,8 +27,28 @@ function TimezoneSelect({
       onChange={onChange}
     >
       {allZones.map((c, idx) => (
-        <option key={idx} value={c}>
+        <option key={idx} value={c} selected={idx === timezone}>
           {c}
+        </option>
+      ))}
+    </Select>
+  );
+}
+
+function TeamSelect({ teams, setTeamIndex, teamIndex }: any) {
+  const onChange = ({ target: { value } }: any) => {
+    setTeamIndex(value);
+  };
+  return (
+    <Select
+      className="form-control"
+      style={{ width: 200, display: 'inline-block' }}
+      value={teams[teamIndex].name}
+      onChange={onChange}
+    >
+      {teams.map((c: any, idx: any) => (
+        <option key={c.id} value={idx}>
+          {c.name}
         </option>
       ))}
     </Select>
