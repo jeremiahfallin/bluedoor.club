@@ -23,7 +23,7 @@ function TimezoneSelect({
     <Select
       className="form-control"
       style={{ width: 200, display: 'inline-block' }}
-      value={timezone}
+      defaultValue={defaultTZ}
       onChange={onChange}
     >
       {allZones.map((c, idx) => (
@@ -37,13 +37,14 @@ function TimezoneSelect({
 
 function TeamSelect({ teams, setTeamIndex, teamIndex }: any) {
   const onChange = ({ target: { value } }: any) => {
-    setTeamIndex(value);
+    const newIndex = parseInt(value);
+    setTeamIndex(newIndex ? newIndex : 0);
   };
   return (
     <Select
       className="form-control"
       style={{ width: 200, display: 'inline-block' }}
-      value={teams[teamIndex].name}
+      defaultValue={teamIndex}
       onChange={onChange}
     >
       {teams.map((c: any, idx: any) => (
@@ -67,6 +68,9 @@ export default function Toolbar({
   setTimezone,
   handleUpdate,
   defaultTZ,
+  teams,
+  setTeamIndex,
+  teamIndex,
 }: any) {
   const { messages } = localizer;
 
@@ -74,6 +78,7 @@ export default function Toolbar({
     <Box className="rbc-toolbar">
       <Box>
         <TimezoneSelect {...{ timezone, setTimezone, defaultTZ }} />
+        <TeamSelect {...{ teams, setTeamIndex, teamIndex }} />
       </Box>
 
       <Heading as="h3" size="lg" className="rbc-toolbar-label">

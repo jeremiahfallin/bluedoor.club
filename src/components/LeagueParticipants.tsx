@@ -9,8 +9,11 @@ import {
   Td,
   TableContainer,
 } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
+import useProfileQuery from '~/hooks/useProfileQuery';
 
 export default function LeagueParticipants({ data }: { data: any }) {
+  const { data: profile } = useProfileQuery();
   return (
     <Box as="main">
       <TableContainer>
@@ -19,22 +22,25 @@ export default function LeagueParticipants({ data }: { data: any }) {
             <Tr>
               <Th>Team</Th>
               <Th>Club</Th>
-              <Th>Losses</Th>
+              <Th>Availability</Th>
             </Tr>
           </Thead>
           <Tbody>
             {data.teams.map((team: any) => {
+              const isClubOwner = profile?.clubId == team.clubId;
               return (
                 <Tr key={team.id}>
                   <Td>{team.name}</Td>
                   <Td>{team.club.name}</Td>
                   <Td>
-                    <Link
-                      color="blue.300"
-                      href={`/games/${data.game.slug}/leagues/${data.slug}/availability`}
-                    >
-                      Set Availability
-                    </Link>
+                    {isClubOwner && (
+                      <Link
+                        color="blue.300"
+                        href={`/games/${data.game.slug}/leagues/${data.slug}/availability`}
+                      >
+                        Set Availability
+                      </Link>
+                    )}
                   </Td>
                 </Tr>
               );
