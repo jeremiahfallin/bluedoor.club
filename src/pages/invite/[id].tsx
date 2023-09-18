@@ -26,8 +26,8 @@ export default function InvitePage() {
     return (
       <Box p={8}>
         <VStack spacing={4}>
-          <Heading>Welcome to the Club Invite Page</Heading>
-          <Text>Sign in to join the Club.</Text>
+          <Heading>Welcome to the Invite Page</Heading>
+          <Text>Sign in to join {invite?.club.name}.</Text>
         </VStack>
       </Box>
     );
