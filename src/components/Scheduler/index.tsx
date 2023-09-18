@@ -22,8 +22,6 @@ const AvailabilitySelector = ({
   seasonStart,
   seasonEnd,
   teams,
-  teamIndex,
-  setTeamIndex,
 }: {
   availabilityRefetch: any;
   availability: any;
@@ -31,9 +29,10 @@ const AvailabilitySelector = ({
   seasonStart: Date;
   seasonEnd: Date;
   teams: any;
-  teamIndex: number;
-  setTeamIndex: any;
 }) => {
+  const [teamIndex, setTeamIndex] = useState(0);
+  const [minTime, setMinTime] = useState(new Date(1972, 0, 1, 0, 0, 0, 0));
+  const [maxTime, setMaxTime] = useState(new Date(1972, 0, 1, 23, 59, 59));
   const toast = useToast();
   const [events, setEvents] = useState(
     availability
@@ -91,10 +90,14 @@ const AvailabilitySelector = ({
         }))
       : [],
   );
+  const teamIndexRef = useRef<any>(0);
 
   useEffect(() => {
     eventsRef.current = events;
   }, [events]);
+  useEffect(() => {
+    teamIndexRef.current = teamIndex;
+  }, [teamIndex]);
 
   const newEvent = useCallback(
     (event: any) => {
@@ -205,7 +208,7 @@ const AvailabilitySelector = ({
       };
     });
     availabilityMutation.mutate({
-      id: availability[teamIndex].id,
+      id: availability[teamIndexRef.current].id,
       times: eventsToSave,
     });
   };
@@ -249,6 +252,8 @@ const AvailabilitySelector = ({
                   setTeamIndex,
                   teamIndex,
                   teams,
+                  setMaxTime,
+                  setMinTime,
                 }}
               />
             ),
@@ -259,6 +264,8 @@ const AvailabilitySelector = ({
           eventPropGetter={eventPropGetter}
           events={events}
           getNow={getNow}
+          max={maxTime}
+          min={minTime}
           onEventDrop={handleEvent}
           onEventResize={handleEvent}
           onSelectSlot={newEvent}

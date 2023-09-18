@@ -1,4 +1,13 @@
-import { Box, Button, Heading, IconButton, Select } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  IconButton,
+  Select,
+  SimpleGrid,
+  Text,
+} from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight, Target } from 'react-feather';
 import moment from 'moment';
 import 'moment-timezone';
@@ -27,7 +36,7 @@ function TimezoneSelect({
       onChange={onChange}
     >
       {allZones.map((c, idx) => (
-        <option key={idx} value={c} selected={idx === timezone}>
+        <option key={idx} value={c}>
           {c}
         </option>
       ))}
@@ -38,7 +47,7 @@ function TimezoneSelect({
 function TeamSelect({ teams, setTeamIndex, teamIndex }: any) {
   const onChange = ({ target: { value } }: any) => {
     const newIndex = parseInt(value);
-    setTeamIndex(newIndex ? newIndex : 0);
+    setTeamIndex(newIndex);
   };
   return (
     <Select
@@ -56,6 +65,42 @@ function TeamSelect({ teams, setTeamIndex, teamIndex }: any) {
   );
 }
 
+function TimeSelect({ setTime, initialValue }: any) {
+  const onChange = ({ target: { value } }: any) => {
+    if (value === '24') {
+      const date = new Date(1972, 0, 1, 23, 59, 59);
+      setTime(date);
+      return;
+    }
+    const date = new Date(1972, 0, 1, value, 0, 0);
+    setTime(date);
+  };
+
+  return (
+    <>
+      <Select
+        className="form-control"
+        style={{ width: 200, display: 'inline-block' }}
+        defaultValue={initialValue}
+        onChange={onChange}
+      >
+        {Array.from({ length: 25 }, (_, i) => (
+          <option key={i} value={i}>
+            {i}
+          </option>
+        ))}
+      </Select>
+    </>
+  );
+}
+
+const FlexSelect = ({ label, children }: any) => (
+  <Flex gap={2} justify={'center'} align="center">
+    <Text w="100%">{label}:</Text>
+    {children}
+  </Flex>
+);
+
 export default function Toolbar({
   // date, // available, but not used here
   label,
@@ -71,15 +116,31 @@ export default function Toolbar({
   teams,
   setTeamIndex,
   teamIndex,
+  setMaxTime,
+  setMinTime,
 }: any) {
   const { messages } = localizer;
 
   return (
     <Box className="rbc-toolbar">
-      <Box>
-        <TimezoneSelect {...{ timezone, setTimezone, defaultTZ }} />
-        <TeamSelect {...{ teams, setTeamIndex, teamIndex }} />
-      </Box>
+      <Flex gap={4}>
+        <Flex direction="column" gap={2}>
+          <FlexSelect label={'Timezone'}>
+            <TimezoneSelect {...{ timezone, setTimezone, defaultTZ }} />
+          </FlexSelect>
+          <FlexSelect label={'Team'}>
+            <TeamSelect {...{ teams, setTeamIndex, teamIndex }} />
+          </FlexSelect>
+        </Flex>
+        <Flex direction="column" gap={2}>
+          <FlexSelect label={'Start date'}>
+            <TimeSelect setTime={setMinTime} initialValue={0} />
+          </FlexSelect>
+          <FlexSelect label={'End date'}>
+            <TimeSelect setTime={setMaxTime} initialValue={24} />
+          </FlexSelect>
+        </Flex>
+      </Flex>
 
       <Heading as="h3" size="lg" className="rbc-toolbar-label">
         {label}

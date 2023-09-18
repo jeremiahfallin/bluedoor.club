@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import Scheduler from '~/components/Scheduler';
 
 import { trpc } from '~/utils/trpc';
-import createTitle from '~/utils/createTitle';
 
 function Wrapper({ league, userId }: { league: any; userId: string }) {
   const availabilityQuery = trpc.availability.get.useQuery({
@@ -12,7 +10,6 @@ function Wrapper({ league, userId }: { league: any; userId: string }) {
     userId: userId,
   }) as any;
   const availability = availabilityQuery.data;
-  const [teamIndex, setTeamIndex] = useState(0);
 
   if (!availability) {
     return null;
@@ -27,8 +24,6 @@ function Wrapper({ league, userId }: { league: any; userId: string }) {
       seasonStart={league.seasonStart}
       seasonEnd={league.seasonEnd}
       teams={teams}
-      teamIndex={teamIndex}
-      setTeamIndex={setTeamIndex}
     />
   );
 }
