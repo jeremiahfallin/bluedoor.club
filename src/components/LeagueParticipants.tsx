@@ -9,7 +9,6 @@ import {
   Td,
   TableContainer,
 } from '@chakra-ui/react';
-import { useSession } from 'next-auth/react';
 import useProfileQuery from '~/hooks/useProfileQuery';
 
 export default function LeagueParticipants({ data }: { data: any }) {
@@ -31,7 +30,7 @@ export default function LeagueParticipants({ data }: { data: any }) {
               return (
                 <Tr key={team.id}>
                   <Td>{team.name}</Td>
-                  <Td>{team.club.name}</Td>
+                  <Td>{team.club && team.club?.name}</Td>
                   <Td>
                     {isClubOwner && (
                       <Link
