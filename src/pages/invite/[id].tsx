@@ -27,17 +27,21 @@ export default function InvitePage() {
       <Box p={8}>
         <VStack spacing={4}>
           <Heading>Welcome to the Invite Page</Heading>
-          <Text>Sign in to join {invite?.club.name}.</Text>
+          <Text>Sign in to join your Club.</Text>
         </VStack>
       </Box>
     );
   }
 
+  const inviteInfo = invite as any;
+
+  const clubName = inviteInfo?.club ? inviteInfo.club.name : 'your Club';
+
   return (
     <Box p={8}>
       <VStack spacing={4}>
         <Heading>Welcome to the Club Invite Page</Heading>
-        <Text>Use your invite to join your Club.</Text>
+        <Text>Use your invite to join {clubName}.</Text>
         <Button onClick={handleJoinClub} isLoading={joinClubMutation.isLoading}>
           Join Club
         </Button>

@@ -1,16 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -48,20 +44,14 @@ model User {
   emailVerified DateTime?
   image         String?
   role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  clubId        String?
   accounts      Account[]
   sessions      Session[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  club      Club?    @relation(fields: [clubId], references: [id])
-  clubId    String?
+  club          Club?     @relation(fields: [clubId], references: [id])
 
   @@map("users")
-}
-
-enum Role {
-  USER
-  ADMIN
 }
 
 model VerificationToken {
@@ -74,41 +64,39 @@ model VerificationToken {
 }
 
 model Club {
-  id    String @id @default(uuid())
-  name  String
-  slug  String @unique
-  users User[]
-  teams Team[]
-
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   invite    Invite[]
+  teams     Team[]
+  users     User[]
 }
 
 model Invite {
   id         String    @id @default(uuid())
-  club       Club?     @relation(fields: [clubId], references: [id])
-  clubId     String? // Can link to a specific club if needed
+  clubId     String?
   expiresAt  DateTime?
   redeemedAt DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @default(now()) @updatedAt
+  club       Club?     @relation(fields: [clubId], references: [id])
 }
 
 model Team {
-  id       String @id @default(uuid())
-  name     String
-  slug     String
-  league   League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  leagueId String
-
+  id                String         @id @default(uuid())
+  name              String
+  slug              String
+  leagueId          String
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @default(now()) @updatedAt
-  matchesAsBlueTeam Match[]        @relation(name: "blueTeam")
-  matchesAsRedTeam  Match[]        @relation(name: "redTeam")
-  club              Club?          @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId            String?
   availability      Availability[]
+  matchesAsBlueTeam Match[]        @relation("blueTeam")
+  matchesAsRedTeam  Match[]        @relation("redTeam")
+  club              Club?          @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  league            League         @relation(fields: [leagueId], references: [id], onDelete: Cascade)
 
   @@unique([leagueId, name])
   @@unique([leagueId, slug])
@@ -122,49 +110,46 @@ model Game {
 }
 
 model League {
-  id          String   @id @default(uuid())
-  name        String
-  slug        String   @unique
-  seasonStart DateTime @default(now())
-  seasonEnd   DateTime @default(now())
-  teams       Team[]
-
+  id               String         @id @default(uuid())
+  name             String
+  slug             String         @unique
+  seasonStart      DateTime       @default(now())
+  seasonEnd        DateTime       @default(now())
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @default(now()) @updatedAt
-  matches          Match[]
-  game             Game           @relation(fields: [gameId], references: [id])
   gameId           String
-  availability     Availability[]
   minimumMatchTime Int?
+  availability     Availability[]
+  game             Game           @relation(fields: [gameId], references: [id])
+  matches          Match[]
+  teams            Team[]
 }
 
 model Match {
   id         String   @id @default(uuid())
-  blueTeam   Team     @relation(name: "blueTeam", fields: [blueTeamId], references: [id])
   blueTeamId String
-  redTeam    Team     @relation(name: "redTeam", fields: [redTeamId], references: [id])
   redTeamId  String
   blueScore  Int?
   redScore   Int?
   date       DateTime
-  league     League   @relation(fields: [leagueId], references: [id])
   leagueId   String
   isPlayoff  Boolean  @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  blueTeam   Team     @relation("blueTeam", fields: [blueTeamId], references: [id])
+  league     League   @relation(fields: [leagueId], references: [id])
+  redTeam    Team     @relation("redTeam", fields: [redTeamId], references: [id])
 }
 
 model Availability {
-  id       String           @id @default(uuid())
-  team     Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId   String
-  league   League           @relation(fields: [leagueId], references: [id])
-  leagueId String
-  times    AvailableTimes[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  id        String           @id @default(uuid())
+  teamId    String
+  leagueId  String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now()) @updatedAt
+  league    League           @relation(fields: [leagueId], references: [id])
+  team      Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  times     AvailableTimes[]
 
   @@unique([teamId, leagueId])
 }
@@ -172,8 +157,13 @@ model Availability {
 model AvailableTimes {
   id             String       @id @default(uuid())
   createdAt      DateTime     @default(now())
-  availability   Availability @relation(fields: [availabilityId], references: [id])
   availabilityId String
-  startTime      DateTime
   endTime        DateTime
+  startTime      DateTime
+  availability   Availability @relation(fields: [availabilityId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
 }
