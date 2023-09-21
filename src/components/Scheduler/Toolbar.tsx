@@ -86,7 +86,7 @@ function TimeSelect({ setTime, initialValue }: any) {
       >
         {Array.from({ length: 25 }, (_, i) => (
           <option key={i} value={i}>
-            {i}
+            {i}:00
           </option>
         ))}
       </Select>
@@ -133,10 +133,10 @@ export default function Toolbar({
           </FlexSelect>
         </Flex>
         <Flex direction="column" gap={2}>
-          <FlexSelect label={'Start date'}>
+          <FlexSelect label={'Start time'}>
             <TimeSelect setTime={setMinTime} initialValue={0} />
           </FlexSelect>
-          <FlexSelect label={'End date'}>
+          <FlexSelect label={'End time'}>
             <TimeSelect setTime={setMaxTime} initialValue={24} />
           </FlexSelect>
         </Flex>
