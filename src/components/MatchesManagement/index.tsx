@@ -5,6 +5,11 @@ import MatchListItem from './MatchListItem'; // Import MatchListItem component
 
 const MatchesManagement = () => {
   const matchesQuery = trpc.match.list.useQuery();
+  const availabilities = trpc.availability.getAll.useQuery({
+    leagueId: '0e94d6b1-1435-4f76-be18-3cc1acd63c9d',
+  });
+
+  console.log(availabilities.data);
 
   return (
     <VStack spacing={4} w="100%">

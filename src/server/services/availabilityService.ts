@@ -2,6 +2,14 @@ import { Availability, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+export async function getAllAvailability(leagueId: string): Promise<any[]> {
+  const availability = await prisma.availability.findMany({
+    where: { leagueId },
+    include: { team: true, times: true },
+  });
+  return availability;
+}
+
 export async function updateAvailability(
   id: string,
   times: any[],

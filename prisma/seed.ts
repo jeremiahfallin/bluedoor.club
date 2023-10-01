@@ -27,11 +27,8 @@ async function main() {
   // const brawlhallaTeams = [...brawlhallaTeamsSet] as string[];
   // const chessTeams = [...chessTeamsSet] as string[];
   // const rocketLeagueTeams = [...rocketLeagueTeamsSet] as string[];
-  // await prisma.league.upsert({
-  //   where: {
-  //     slug: 'brawlhalla-spring-2023',
-  //   },
-  //   create: {
+  // const brawlhallaSpring = await prisma.league.create({
+  //   data: {
   //     name: 'Brawlhalla',
   //     slug: 'brawlhalla-spring-2023',
   //     game: {
@@ -46,39 +43,18 @@ async function main() {
   //       },
   //     },
   //     teams: {
-  //       connectOrCreate: brawlhallaTeams.map((team) => ({
-  //         where: {
-  //           slug: team.toLowerCase().replace(/ /g, '-'),
-  //         },
-  //         create: {
-  //           name: team,
-  //           slug: team.toLowerCase().replace(/ /g, '-'),
-  //         },
-  //       })),
-  //     },
-  //     matches: {
-  //       create: brawlhalla.map((match) => ({
-  //         blueTeam: {
-  //           connect: {
-  //             slug: match.blue.toLowerCase().replace(/ /g, '-'),
-  //           },
-  //         },
-  //         redTeam: {
-  //           connect: {
-  //             slug: match.red.toLowerCase().replace(/ /g, '-'),
-  //           },
-  //         },
-  //         date: match.time,
+  //       create: brawlhallaTeams.map((team) => ({
+  //         name: team,
+  //         slug: team.toLowerCase().replace(/ /g, '-'),
   //       })),
   //     },
   //   },
-  //   update: {},
+  //   include: {
+  //     teams: true,
+  //   },
   // });
-  // await prisma.league.upsert({
-  //   where: {
-  //     slug: 'chess-spring-2023',
-  //   },
-  //   create: {
+  // const chessSpring = await prisma.league.create({
+  //   data: {
   //     name: 'Chess',
   //     slug: 'chess-spring-2023',
   //     game: {
@@ -93,39 +69,15 @@ async function main() {
   //       },
   //     },
   //     teams: {
-  //       connectOrCreate: chessTeams.map((team) => ({
-  //         where: {
-  //           slug: team.toLowerCase().replace(/ /g, '-'),
-  //         },
-  //         create: {
-  //           name: team,
-  //           slug: team.toLowerCase().replace(/ /g, '-'),
-  //         },
-  //       })),
-  //     },
-  //     matches: {
-  //       create: chess.map((match) => ({
-  //         blueTeam: {
-  //           connect: {
-  //             slug: match.blue.toLowerCase().replace(/ /g, '-'),
-  //           },
-  //         },
-  //         redTeam: {
-  //           connect: {
-  //             slug: match.red.toLowerCase().replace(/ /g, '-'),
-  //           },
-  //         },
-  //         date: match.time,
+  //       create: chessTeams.map((team) => ({
+  //         name: team,
+  //         slug: team.toLowerCase().replace(/ /g, '-'),
   //       })),
   //     },
   //   },
-  //   update: {},
   // });
-  // await prisma.league.upsert({
-  //   where: {
-  //     slug: 'rocket-league-spring-2023',
-  //   },
-  //   create: {
+  // const rocketLeagueSpring = await prisma.league.create({
+  //   data: {
   //     name: 'Rocket League',
   //     slug: 'rocket-league-spring-2023',
   //     game: {
@@ -140,33 +92,12 @@ async function main() {
   //       },
   //     },
   //     teams: {
-  //       connectOrCreate: rocketLeagueTeams.map((team) => ({
-  //         where: {
-  //           slug: team.toLowerCase().replace(/ /g, '-'),
-  //         },
-  //         create: {
-  //           name: team,
-  //           slug: team.toLowerCase().replace(/ /g, '-'),
-  //         },
-  //       })),
-  //     },
-  //     matches: {
-  //       create: rocketLeague.map((match) => ({
-  //         blueTeam: {
-  //           connect: {
-  //             slug: match.blue.toLowerCase().replace(/ /g, '-'),
-  //           },
-  //         },
-  //         redTeam: {
-  //           connect: {
-  //             slug: match.red.toLowerCase().replace(/ /g, '-'),
-  //           },
-  //         },
-  //         date: match.time,
+  //       create: rocketLeagueTeams.map((team) => ({
+  //         name: team,
+  //         slug: team.toLowerCase().replace(/ /g, '-'),
   //       })),
   //     },
   //   },
-  //   update: {},
   // });
   // await prisma.game.upsert({
   //   where: {
@@ -178,6 +109,16 @@ async function main() {
   //   },
   //   update: {},
   // });
+  // const brawlhallaMatchData = brawlhalla.map((match) => {
+  //   return {
+  //     leagueId: brawlhallaSpring.id,
+  //     date: match.time,
+  //     blueTeam: match.blue,
+  //     redTeam: match.red,
+  //   };
+  // });
+  // await prisma.match.createMany({
+  // })
 }
 
 main()
