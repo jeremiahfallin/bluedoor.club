@@ -26,6 +26,31 @@ export async function getMatchById(id: string): Promise<Match | null> {
   return match;
 }
 
+export async function getMatchesByClubId(clubId: string): Promise<Match[]> {
+  const matches = await prisma.match.findMany({
+    where: {
+      OR: [
+        {
+          blueTeam: {
+            clubId: clubId,
+          },
+        },
+        {
+          redTeam: {
+            clubId: clubId,
+          },
+        },
+      ],
+    },
+    include: {
+      blueTeam: true,
+      redTeam: true,
+    },
+  });
+
+  return matches;
+}
+
 export async function createMatch(input: {
   leagueId: string;
   blueTeamId: string;
@@ -35,13 +60,20 @@ export async function createMatch(input: {
   date: string;
 }): Promise<Match> {
   const { leagueId, blueTeamId, redTeamId, blueScore, redScore, date } = input;
+  let data = {};
+  if (typeof blueScore === 'number') {
+    data = { ...data, blueScore };
+  }
+  if (typeof redScore === 'number') {
+    data = { ...data, redScore };
+  }
+
   const match = await prisma.match.create({
     data: {
+      ...data,
       league: { connect: { id: leagueId } },
       blueTeam: { connect: { id: blueTeamId } },
       redTeam: { connect: { id: redTeamId } },
-      blueScore,
-      redScore,
       date,
     },
     include: {

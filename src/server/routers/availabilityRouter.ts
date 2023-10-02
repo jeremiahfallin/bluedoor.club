@@ -4,6 +4,15 @@ import { z } from 'zod';
 import * as availabilityService from '../services/availabilityService';
 
 export const availabilityRouter = router({
+  getAll: publicProcedure
+    .input(z.object({ leagueId: z.string() }))
+    .query(async ({ input }) => {
+      const { leagueId } = input;
+      const availability = await availabilityService.getAllAvailability(
+        leagueId,
+      );
+      return availability;
+    }),
   update: publicProcedure
     .input(
       z.object({

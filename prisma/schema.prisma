@@ -97,9 +97,40 @@ model Team {
   matchesAsRedTeam  Match[]        @relation("redTeam")
   club              Club?          @relation(fields: [clubId], references: [id], onDelete: Cascade)
   league            League         @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  player            Player[]
+  stat              Stat[]
 
   @@unique([leagueId, name])
   @@unique([leagueId, slug])
+}
+
+model Player {
+  id        String   @id @default(uuid())
+  name      String
+  handle    String?
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  stat      Stat[]
+
+  @@unique([teamId, name])
+  @@unique([teamId, handle])
+}
+
+model Stat {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  match     Match    @relation(fields: [matchId], references: [id])
+  player    Player   @relation(fields: [playerId], references: [id])
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    String
+  playerId  String
+  character String
+  stock     Int
+  win       Boolean
+  matchId   String
 }
 
 model Game {
@@ -139,6 +170,7 @@ model Match {
   blueTeam   Team     @relation("blueTeam", fields: [blueTeamId], references: [id])
   league     League   @relation(fields: [leagueId], references: [id])
   redTeam    Team     @relation("redTeam", fields: [redTeamId], references: [id])
+  stat       Stat[]
 }
 
 model Availability {
