@@ -126,7 +126,7 @@ model Stat {
   player    Player   @relation(fields: [playerId], references: [id])
   team      Team     @relation(fields: [teamId], references: [id])
   teamId    String
-  playerId  String   @unique
+  playerId  String
   character String
   stock     Int
   win       Boolean
