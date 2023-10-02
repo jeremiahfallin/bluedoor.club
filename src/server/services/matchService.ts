@@ -60,13 +60,20 @@ export async function createMatch(input: {
   date: string;
 }): Promise<Match> {
   const { leagueId, blueTeamId, redTeamId, blueScore, redScore, date } = input;
+  let data = {};
+  if (typeof blueScore === 'number') {
+    data = { ...data, blueScore };
+  }
+  if (typeof redScore === 'number') {
+    data = { ...data, redScore };
+  }
+
   const match = await prisma.match.create({
     data: {
+      ...data,
       league: { connect: { id: leagueId } },
       blueTeam: { connect: { id: blueTeamId } },
       redTeam: { connect: { id: redTeamId } },
-      blueScore,
-      redScore,
       date,
     },
     include: {
