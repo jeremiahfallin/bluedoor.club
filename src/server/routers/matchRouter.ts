@@ -12,6 +12,10 @@ export const matchRouter = router({
     const match = await matchService.getMatchById(input);
     return match;
   }),
+  getByClubId: publicProcedure.input(z.string()).query(async ({ input }) => {
+    const matches = await matchService.getMatchesByClubId(input);
+    return matches;
+  }),
   create: publicProcedure
     .input(
       z.object({
@@ -31,8 +35,8 @@ export const matchRouter = router({
     .input(
       z.object({
         id: z.string(),
-        blueTeamScore: z.number().optional(),
-        redTeamScore: z.number().optional(),
+        blueScore: z.number().optional(),
+        redScore: z.number().optional(),
         date: z.date().optional(),
       }),
     )

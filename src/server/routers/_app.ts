@@ -9,6 +9,8 @@ import { matchRouter } from './matchRouter';
 import { userRouter } from './userRouter';
 import { availabilityRouter } from './availabilityRouter';
 import { inviteRouter } from './inviteRouter';
+import { playerRouter } from './playerRouter';
+import { statRouter } from './statRouter';
 
 export const appRouter = router({
   healthcheck: publicProcedure.query(() => 'yay!'),
@@ -19,6 +21,8 @@ export const appRouter = router({
   invite: inviteRouter,
   league: leagueRouter,
   match: matchRouter,
+  player: playerRouter,
+  stat: statRouter,
   user: userRouter,
 });
 

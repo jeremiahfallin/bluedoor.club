@@ -97,35 +97,38 @@ export default function IndexPage() {
             {data.seasonStart.toDateString()} to {data.seasonEnd.toDateString()}
           </Heading>
         </Box>
-        {profileQuery && profileQuery.data && profileQuery.data.clubId && (
-          <>
-            <JoinLeagueModal
-              isOpen={isOpen}
-              onClose={onClose}
-              leagueId={data.id}
-              leagueName={data.name}
-              clubId={profileQuery.data.clubId}
-              teamName={teamName}
-              setTeamName={setTeamName}
-              joinLeagueMutation={joinLeagueMutation}
-            />
-            <Button onClick={onOpen} colorScheme="blue">
-              Join League
-            </Button>
-          </>
-        )}
+        {profileQuery &&
+          profileQuery.data &&
+          profileQuery.data.clubId &&
+          data.seasonStart < new Date() && (
+            <>
+              <JoinLeagueModal
+                isOpen={isOpen}
+                onClose={onClose}
+                leagueId={data.id}
+                leagueName={data.name}
+                clubId={profileQuery.data.clubId}
+                teamName={teamName}
+                setTeamName={setTeamName}
+                joinLeagueMutation={joinLeagueMutation}
+              />
+              <Button onClick={onOpen} colorScheme="blue">
+                Join League
+              </Button>
+            </>
+          )}
       </Flex>
       <Tabs>
         <TabList>
-          <Tab>Teams</Tab>
           <Tab>Schedule</Tab>
+          <Tab>Teams</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <LeagueParticipants data={data} />
+            <Schedule data={data} />
           </TabPanel>
           <TabPanel>
-            <Schedule data={data} />
+            <LeagueParticipants data={data} />
           </TabPanel>
         </TabPanels>
       </Tabs>
