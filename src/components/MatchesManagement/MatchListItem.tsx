@@ -5,22 +5,7 @@ import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import { trpc } from '~/utils/trpc';
 import MatchModal from './MatchModal'; // Import MatchModal component
 
-interface MatchListItemProps {
-  match: {
-    id: string;
-    blueTeamId: string;
-    redTeamId: string;
-    date: Date;
-    blueScore: number | null | undefined;
-    redScore: number | null | undefined;
-  };
-  onMatchUpdate: () => void;
-}
-
-const MatchListItem: React.FC<MatchListItemProps> = ({
-  match,
-  onMatchUpdate,
-}) => {
+const MatchListItem = ({ match, onMatchUpdate }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [updatedMatch, setUpdatedMatch] = useState(match);
   const updateMatchMutation = trpc.match.update.useMutation({
