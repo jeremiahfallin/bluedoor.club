@@ -11,8 +11,8 @@ interface MatchListItemProps {
     blueTeamId: string;
     redTeamId: string;
     date: Date;
-    blueScore: number | null;
-    redScore: number | null;
+    blueScore: number | null | undefined;
+    redScore: number | null | undefined;
   };
   onMatchUpdate: () => void;
 }
