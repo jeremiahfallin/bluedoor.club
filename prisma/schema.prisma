@@ -127,8 +127,8 @@ model Stat {
   team      Team     @relation(fields: [teamId], references: [id])
   teamId    String
   playerId  String
-  character String
-  stock     Int
+  character String?
+  stock     Int?
   win       Boolean
   matchId   String
 }
