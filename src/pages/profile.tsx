@@ -351,7 +351,7 @@ const SubmitScoreModal = ({
               placeholder="Handle"
               onChange={(e) => setPlayerOneHandle(e.target.value)}
             />
-            <Text>Stocks</Text>
+            <Text>Match Wins</Text>
             <NumberInput
               min={0}
               max={3}
@@ -395,7 +395,7 @@ const SubmitScoreModal = ({
               placeholder="Handle"
               onChange={(e) => setPlayerTwoHandle(e.target.value)}
             />
-            <Text>Stocks</Text>
+            <Text>Match Wins</Text>
             <NumberInput
               min={0}
               max={3}
@@ -439,7 +439,7 @@ const SubmitScoreModal = ({
               placeholder="Handle"
               onChange={(e) => setPlayerThreeHandle(e.target.value)}
             />
-            <Text>Stocks</Text>
+            <Text>Match Wins</Text>
             <NumberInput
               min={0}
               max={3}
