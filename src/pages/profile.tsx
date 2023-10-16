@@ -497,7 +497,7 @@ const UpcomingMatches = ({ clubId }: { clubId: string }) => {
 
   return (
     <VStack spacing={4} align="stretch">
-      {data?.sort((a, b) => a.date - b.date).map((match: any) => {
+      {data?.sort((a, b) => new Date(a.date) - new Date(b.date)).map((match: any) => {
         const teamSide = match.blueTeam.clubId === clubId ? 'blue' : 'red';
         return (
           <VStack key={match.id} align="stretch">
