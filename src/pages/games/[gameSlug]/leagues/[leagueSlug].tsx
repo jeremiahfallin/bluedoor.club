@@ -1,5 +1,7 @@
 // pages/games/[gameSlug]/leagues/[leagueSlug].tsx
 import { useState } from 'react';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+
 import NextError from 'next/error';
 import {
   Box,
@@ -18,6 +20,9 @@ import { useRouter } from 'next/router';
 import Schedule from '~/components/Schedule';
 import LeagueParticipants from '~/components/LeagueParticipants';
 import { trpc } from '~/utils/trpc';
+import { appRouter, createContext } from '~/pages/api/trpc/[trpc]';
+import { createServerSideHelpers } from '@trpc/react-query/server';
+import superjson from 'superjson';
 import { League } from '@prisma/client';
 import { JoinLeagueModal } from '~/pages/profile';
 import { useSession } from 'next-auth/react';
@@ -135,3 +140,22 @@ export default function IndexPage() {
     </Box>
   );
 }
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext<{ id: string }>,
+) => {
+  const ssg = createServerSideHelpers({
+    router: appRouter,
+    ctx: await createContext(),
+    transformer: superjson,
+  });
+  const id = context.params?.id as string;
+
+  await ssg.league.getBySlug.prefetch(id);
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+  };
+};

@@ -16,6 +16,7 @@ import ClubsManagement from '~/components/ClubsManagement';
 import LeaguesManagement from '~/components/LeaguesManagement';
 import UsersManagement from '~/components/UsersManagement';
 import MatchesManagement from '~/components/MatchesManagement';
+import AvailabilityManagement from '~/components/AvailabilityManagement';
 
 const AdminPanel = () => {
   const router = useRouter();
@@ -41,6 +42,7 @@ const AdminPanel = () => {
             <Tab>Leagues</Tab>
             <Tab>Users</Tab>
             <Tab>Matches</Tab>
+            <Tab>Availabilities</Tab>
           </TabList>
 
           <TabPanels>
@@ -55,6 +57,9 @@ const AdminPanel = () => {
             </TabPanel>
             <TabPanel>
               <MatchesManagement />
+            </TabPanel>
+            <TabPanel>
+              <AvailabilityManagement />
             </TabPanel>
           </TabPanels>
         </Tabs>
