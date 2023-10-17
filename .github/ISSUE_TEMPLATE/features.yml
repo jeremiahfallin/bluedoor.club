@@ -15,7 +15,7 @@ body:
       label: Summary
       description: 
       placeholder: I'd like to see...
-      value: "Users love stats. As a user I would love to see more stats."
+      value: ""
     validations:
       required: true
   - type: textarea
@@ -24,7 +24,7 @@ body:
       label: Acceptance Criteria
       description: How will we know we hit the mark?
       placeholder: The feature should be implemented.
-      value: "More stats are on the website."
+      value: ""
     validations:
       required: false
   - type: textarea
