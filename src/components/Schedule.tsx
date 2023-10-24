@@ -1,4 +1,4 @@
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, Fragment } from 'react';
 import {
   Box,
   Button,
@@ -64,13 +64,14 @@ function TimeDisplay({ date }: { date: Date }) {
   return <>{time}</>;
 }
 
-function TableRow({ match, clubId }: any) {
+function TableRow({ match, clubId, refetch }: any) {
   const toast = useToast();
   const [blueScore, setBlueScore] = useState(match.blueScore);
   const [redScore, setRedScore] = useState(match.redScore);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isEditingBlue, setIsEditingBlue] = useState(false);
   const [isEditingRed, setIsEditingRed] = useState(false);
+
   const blueTeamStats = match.stat.filter(
     (stat: any) => stat.teamId === match.blueTeam.id,
   );
@@ -136,45 +137,23 @@ function TableRow({ match, clubId }: any) {
   const createStatMutation = trpc.stat.create.useMutation();
   const updateStatMutation = trpc.stat.update.useMutation();
   const updateMatchMutation = trpc.match.update.useMutation();
-  const upsertPlayerMutation = trpc.player.upsert.useMutation({
-    onSuccess: (data: any) => {
-      const playerKey = Object.keys(blueDetails).find(
-        (key) => blueDetails[key].name === data.name,
-      );
-      if (!playerKey) return;
-      createStatMutation.mutate({
-        character: blueDetails[playerKey].character,
-        matchId: match.id,
-        playerId: data.id,
-        stock: blueDetails[playerKey].matchWins,
-        teamId: match.blueTeam.id,
-        win: blueDetails[playerKey].matchWins >= 2,
-      });
-      toast({
-        title: 'Score Submitted',
-        description: 'Your score has been submitted successfully.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    },
-  });
+  const upsertPlayerMutation = trpc.player.upsert.useMutation();
 
-  const handleClick = () => {
-    if (canEditBlue && !isEditingBlue) {
+  const handleClick = async (color: string, isEditing: boolean) => {
+    if (canEditBlue && !isEditing && color === 'blue') {
       setIsEditingBlue(true);
       return;
     }
-    if (canEditRed && !isEditingRed) {
+    if (canEditRed && !isEditing && color === 'red') {
       setIsEditingRed(true);
       return;
     }
-    if ((canEditBlue || canEditRed) && (isEditingBlue || isEditingRed)) {
+    if ((canEditBlue || canEditRed) && isEditing) {
       const data = {} as any;
-      if (canEditBlue && blueScore) {
+      if (canEditBlue && blueScore && color === 'blue') {
         data['blueScore'] = parseInt(blueScore);
       }
-      if (canEditRed && redScore) {
+      if (canEditRed && redScore && color === 'blue') {
         data['redScore'] = parseInt(redScore);
       }
       updateMatchMutation.mutate({
@@ -182,42 +161,190 @@ function TableRow({ match, clubId }: any) {
         ...data,
       });
     }
-    if (isEditingBlue) {
-      upsertPlayerMutation.mutate({
+    if (isEditing && color === 'blue') {
+      const b1 = await upsertPlayerMutation.mutateAsync({
         name: blueDetails.player1.name,
         teamId: match.blueTeam.id,
         handle: blueDetails.player1.handle,
       });
-      upsertPlayerMutation.mutate({
+      const b1p = b1.id;
+      const b2 = await upsertPlayerMutation.mutateAsync({
         name: blueDetails.player2.name,
         teamId: match.blueTeam.id,
         handle: blueDetails.player2.handle,
       });
-      upsertPlayerMutation.mutate({
+      console.log(b2);
+      const b2p = b2.id;
+      const b3 = await upsertPlayerMutation.mutateAsync({
         name: blueDetails.player3.name,
         teamId: match.blueTeam.id,
         handle: blueDetails.player3.handle,
       });
-      setIsEditingBlue(false);
+      const b3p = b3.id;
+      if (blueDetails.player1.statId !== '' && b1p) {
+        updateStatMutation.mutate({
+          id: blueDetails.player1.statId,
+          character: blueDetails.player1.character,
+          matchId: match.id,
+          playerId: b1p,
+          stock: parseInt(blueDetails.player1.matchWins),
+          teamId: match.blueTeam.id,
+          win: blueDetails.player1.matchWins >= 2,
+        });
+      } else if (b1p) {
+        createStatMutation.mutate({
+          character: blueDetails.player1.character,
+          matchId: match.id,
+          playerId: b1p,
+          stock: parseInt(blueDetails.player1.matchWins),
+          teamId: match.blueTeam.id,
+          win: blueDetails.player1.matchWins >= 2,
+        });
+      }
+      if (blueDetails.player2.statId !== '' && b2p) {
+        updateStatMutation.mutate({
+          id: blueDetails.player2.statId,
+          character: blueDetails.player2.character,
+          matchId: match.id,
+          playerId: b2p,
+          stock: parseInt(blueDetails.player2.matchWins),
+          teamId: match.blueTeam.id,
+          win: blueDetails.player2.matchWins >= 2,
+        });
+      } else if (b2p) {
+        createStatMutation.mutate({
+          character: blueDetails.player2.character,
+          matchId: match.id,
+          playerId: b2p,
+          stock: parseInt(blueDetails.player2.matchWins),
+          teamId: match.blueTeam.id,
+          win: blueDetails.player2.matchWins >= 2,
+        });
+      }
+      if (blueDetails.player3.statId !== '' && b3p) {
+        updateStatMutation.mutate({
+          id: blueDetails.player3.statId,
+          character: blueDetails.player3.character,
+          matchId: match.id,
+          playerId: b3p,
+          stock: parseInt(blueDetails.player3.matchWins),
+          teamId: match.blueTeam.id,
+          win: blueDetails.player3.matchWins >= 2,
+        });
+      } else if (b3p) {
+        createStatMutation.mutate({
+          character: blueDetails.player3.character,
+          matchId: match.id,
+          playerId: b3p,
+          stock: parseInt(blueDetails.player3.matchWins),
+          teamId: match.blueTeam.id,
+          win: blueDetails.player3.matchWins >= 2,
+        });
+      }
+      toast({
+        title: 'Score Submitted',
+        description: 'Your score has been submitted successfully.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
     }
-    if (isEditingRed) {
-      upsertPlayerMutation.mutate({
+    if (isEditing && color === 'red') {
+      const r1 = await upsertPlayerMutation.mutateAsync({
         name: redDetails.player1.name,
         teamId: match.redTeam.id,
         handle: redDetails.player1.handle,
       });
-      upsertPlayerMutation.mutate({
+      const r1p = r1.id;
+      const r2 = await upsertPlayerMutation.mutateAsync({
         name: redDetails.player2.name,
         teamId: match.redTeam.id,
         handle: redDetails.player2.handle,
       });
-      upsertPlayerMutation.mutate({
+      const r2p = r2.id;
+      const r3 = await upsertPlayerMutation.mutateAsync({
         name: redDetails.player3.name,
         teamId: match.redTeam.id,
         handle: redDetails.player3.handle,
       });
-      setIsEditingRed(false);
+      const r3p = r3.id;
+      if (redDetails.player1.statId !== '' && r1p) {
+        updateStatMutation.mutate({
+          id: redDetails.player1.statId,
+          character: redDetails.player1.character,
+          matchId: match.id,
+          playerId: r1p,
+          stock: parseInt(redDetails.player1.matchWins),
+          teamId: match.redTeam.id,
+          win: redDetails.player1.matchWins >= 2,
+        });
+      } else if (r1p) {
+        createStatMutation.mutate({
+          character: redDetails.player1.character,
+          matchId: match.id,
+          playerId: r1p,
+          stock: parseInt(redDetails.player1.matchWins),
+          teamId: match.redTeam.id,
+          win: redDetails.player1.matchWins >= 2,
+        });
+      }
+      if (redDetails.player2.statId !== '' && r2p) {
+        updateStatMutation.mutate({
+          id: redDetails.player2.statId,
+          character: redDetails.player2.character,
+          matchId: match.id,
+          playerId: r2p,
+          stock: parseInt(redDetails.player2.matchWins),
+          teamId: match.redTeam.id,
+          win: redDetails.player2.matchWins >= 2,
+        });
+      } else if (r2p) {
+        createStatMutation.mutate({
+          character: redDetails.player2.character,
+          matchId: match.id,
+          playerId: r2p,
+          stock: parseInt(redDetails.player2.matchWins),
+          teamId: match.redTeam.id,
+          win: redDetails.player2.matchWins >= 2,
+        });
+      }
+      if (redDetails.player3.statId !== '' && r3p) {
+        updateStatMutation.mutate({
+          id: redDetails.player3.statId,
+          character: redDetails.player3.character,
+          matchId: match.id,
+          playerId: r3p,
+          stock: parseInt(redDetails.player3.matchWins),
+          teamId: match.redTeam.id,
+          win: redDetails.player3.matchWins >= 2,
+        });
+      } else if (r3p) {
+        createStatMutation.mutate({
+          character: redDetails.player3.character,
+          matchId: match.id,
+          playerId: r3p,
+          stock: parseInt(redDetails.player3.matchWins),
+          teamId: match.redTeam.id,
+          win: redDetails.player3.matchWins >= 2,
+        });
+      }
+      toast({
+        title: 'Score Submitted',
+        description: 'Your score has been submitted successfully.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
     }
+    if (canEditBlue && isEditing && color === 'blue') {
+      setIsEditingBlue(false);
+      return;
+    }
+    if (canEditRed && isEditing && color === 'red') {
+      setIsEditingRed(false);
+      return;
+    }
+    refetch();
   };
 
   return (
@@ -247,15 +374,7 @@ function TableRow({ match, clubId }: any) {
               <Thead background="green.700">
                 <Tr>
                   <Td px={4}>Score</Td>
-                  <Td px={4}>Player 1</Td>
-                  <Td px={4}>Handle</Td>
-                  <Td px={4}>Character</Td>
-                  <Td px={4}>Match Wins</Td>
-                  <Td px={4}>Player 2</Td>
-                  <Td px={4}>Handle</Td>
-                  <Td px={4}>Character</Td>
-                  <Td px={4}>Match Wins</Td>
-                  <Td px={4}>Player 3</Td>
+                  <Td px={4}>Player</Td>
                   <Td px={4}>Handle</Td>
                   <Td px={4}>Character</Td>
                   <Td px={4}>Match Wins</Td>
@@ -263,21 +382,19 @@ function TableRow({ match, clubId }: any) {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr background={'blue.700'}>
-                  {isEditingBlue ? (
-                    <Td>
-                      <Input
-                        onChange={(e) => setBlueScore(e.target.value)}
-                        value={blueScore}
-                      />
-                    </Td>
-                  ) : (
-                    <Td>{blueScore}</Td>
-                  )}
-                  {Object.keys(blueDetails).map((key, idx) => {
-                    if (isEditingBlue) {
-                      return (
-                        <>
+                {Object.keys(blueDetails).map((key, idx) => {
+                  if (isEditingBlue) {
+                    return (
+                      <Fragment key={key}>
+                        <Tr background={'blue.700'}>
+                          <Td>
+                            {idx === 0 && (
+                              <Input
+                                onChange={(e) => setBlueScore(e.target.value)}
+                                value={blueScore}
+                              />
+                            )}
+                          </Td>
                           <Td>
                             <Input
                               onChange={(e) =>
@@ -303,7 +420,9 @@ function TableRow({ match, clubId }: any) {
                             />
                           </Td>
                           <Td>
-                            <Input
+                            <Select
+                              placeholder="Character"
+                              value={blueDetails[key].character}
                               onChange={(e) =>
                                 setBlueDetails((p: any) => {
                                   const newP = { ...p };
@@ -311,8 +430,11 @@ function TableRow({ match, clubId }: any) {
                                   return newP;
                                 })
                               }
-                              value={blueDetails[key].character}
-                            />
+                            >
+                              {characters.map((character) => (
+                                <option key={character}>{character}</option>
+                              ))}
+                            </Select>
                           </Td>
                           <Td>
                             <Input
@@ -326,43 +448,59 @@ function TableRow({ match, clubId }: any) {
                               value={blueDetails[key].matchWins}
                             />
                           </Td>
-                        </>
-                      );
-                    } else {
-                      return (
-                        <>
+                          <Td p={1}>
+                            {canEditBlue && idx === 0 && (
+                              <Button
+                                onClick={() =>
+                                  handleClick('blue', isEditingBlue)
+                                }
+                              >
+                                {isEditingBlue ? 'Save' : 'Edit'}
+                              </Button>
+                            )}
+                          </Td>
+                        </Tr>
+                      </Fragment>
+                    );
+                  } else {
+                    return (
+                      <Fragment key={key}>
+                        <Tr background={'blue.700'}>
+                          <Td>{idx === 0 ? blueScore : null}</Td>
                           <Td>{blueDetails[key].name}</Td>
                           <Td>{blueDetails[key].handle}</Td>
                           <Td>{blueDetails[key].character}</Td>
                           <Td>{blueDetails[key].matchWins}</Td>
-                        </>
-                      );
-                    }
-                  })}
-                  <Td>
-                    {canEditBlue && (
-                      <Button onClick={handleClick}>
-                        {isEditingBlue ? 'Save' : 'Edit'}
-                      </Button>
-                    )}
-                  </Td>
-                </Tr>
+                          <Td p={1}>
+                            {canEditBlue && idx === 0 && (
+                              <Button
+                                onClick={() =>
+                                  handleClick('blue', isEditingBlue)
+                                }
+                              >
+                                {isEditingBlue ? 'Save' : 'Edit'}
+                              </Button>
+                            )}
+                          </Td>
+                        </Tr>
+                      </Fragment>
+                    );
+                  }
+                })}
 
-                <Tr background={'red.700'}>
-                  {isEditingRed ? (
-                    <Td>
-                      <Input
-                        onChange={(e) => setRedScore(e.target.value)}
-                        value={redScore}
-                      />
-                    </Td>
-                  ) : (
-                    <Td>{redScore}</Td>
-                  )}
-                  {Object.keys(redDetails).map((key, idx) => {
-                    if (isEditingRed) {
-                      return (
-                        <>
+                {Object.keys(redDetails).map((key, idx) => {
+                  if (isEditingRed) {
+                    return (
+                      <Fragment key={key}>
+                        <Tr background={'red.700'}>
+                          <Td>
+                            {idx === 0 && (
+                              <Input
+                                onChange={(e) => setRedScore(e.target.value)}
+                                value={redScore}
+                              />
+                            )}
+                          </Td>
                           <Td>
                             <Input
                               onChange={(e) =>
@@ -388,7 +526,9 @@ function TableRow({ match, clubId }: any) {
                             />
                           </Td>
                           <Td>
-                            <Input
+                            <Select
+                              placeholder="Character"
+                              value={redDetails[key].character}
                               onChange={(e) =>
                                 setRedDetails((p: any) => {
                                   const newP = { ...p };
@@ -396,8 +536,11 @@ function TableRow({ match, clubId }: any) {
                                   return newP;
                                 })
                               }
-                              value={redDetails[key].character}
-                            />
+                            >
+                              {characters.map((character) => (
+                                <option key={character}>{character}</option>
+                              ))}
+                            </Select>
                           </Td>
                           <Td>
                             <Input
@@ -411,27 +554,41 @@ function TableRow({ match, clubId }: any) {
                               value={redDetails[key].matchWins}
                             />
                           </Td>
-                        </>
-                      );
-                    } else {
-                      return (
-                        <>
+                          <Td p={1}>
+                            {canEditRed && idx === 0 && (
+                              <Button
+                                onClick={() => handleClick('red', isEditingRed)}
+                              >
+                                {isEditingRed ? 'Save' : 'Edit'}
+                              </Button>
+                            )}
+                          </Td>
+                        </Tr>
+                      </Fragment>
+                    );
+                  } else {
+                    return (
+                      <Fragment key={key}>
+                        <Tr background={'red.700'}>
+                          <Td>{idx === 0 ? redScore : null}</Td>
                           <Td>{redDetails[key].name}</Td>
                           <Td>{redDetails[key].handle}</Td>
                           <Td>{redDetails[key].character}</Td>
                           <Td>{redDetails[key].matchWins}</Td>
-                        </>
-                      );
-                    }
-                  })}
-                  <Td>
-                    {canEditRed && (
-                      <Button onClick={handleClick}>
-                        {isEditingRed ? 'Save' : 'Edit'}
-                      </Button>
-                    )}
-                  </Td>
-                </Tr>
+                          <Td p={1}>
+                            {canEditRed && idx === 0 && (
+                              <Button
+                                onClick={() => handleClick('red', isEditingRed)}
+                              >
+                                {isEditingRed ? 'Save' : 'Edit'}
+                              </Button>
+                            )}
+                          </Td>
+                        </Tr>
+                      </Fragment>
+                    );
+                  }
+                })}
               </Tbody>
             </Table>
           </Td>
@@ -441,7 +598,15 @@ function TableRow({ match, clubId }: any) {
   );
 }
 
-export default function Schedule({ data, clubId }: { data: any; clubId: any }) {
+export default function Schedule({
+  data,
+  clubId,
+  refetch,
+}: {
+  data: any;
+  clubId: any;
+  refetch: any;
+}) {
   if (data.matches.length === 0) {
     return <Text>No matches scheduled yet. Check back later!</Text>;
   }
@@ -464,7 +629,12 @@ export default function Schedule({ data, clubId }: { data: any; clubId: any }) {
               {data.matches.map((match: Match) => {
                 // color background based on week number
                 return (
-                  <TableRow key={match.id} match={match} clubId={clubId} />
+                  <TableRow
+                    key={match.id}
+                    match={match}
+                    clubId={clubId}
+                    refetch={refetch}
+                  />
                 );
               })}
             </Tbody>
