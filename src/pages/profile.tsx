@@ -38,95 +38,7 @@ import {
 import { trpc } from '~/utils/trpc';
 import { useState } from 'react';
 import { Link } from '@chakra-ui/next-js';
-
-const characters = [
-  'Banjo & Kazooie',
-  'Bayonetta',
-  'Bowser',
-  'Bowser Jr.',
-  'Byleth',
-  'Captain Falcon',
-  'Chrom',
-  'Cloud',
-  'Corrin',
-  'Daisy',
-  'Dark Pit',
-  'Dark Samus',
-  'Diddy Kong',
-  'Donkey Kong',
-  'Dr. Mario',
-  'Duck Hunt',
-  'Falco',
-  'Fox',
-  'Ganondorf',
-  'Greninja',
-  'Hero',
-  'Ice Climbers',
-  'Ike',
-  'Incineroar',
-  'Inkling',
-  'Isabelle',
-  'Jigglypuff',
-  'Joker',
-  'Kazuya',
-  'Ken',
-  'King Dedede',
-  'King K. Rool',
-  'Kirby',
-  'Link',
-  'Little Mac',
-  'Lucario',
-  'Lucas',
-  'Lucina',
-  'Luigi',
-  'Mario',
-  'Marth',
-  'Mega Man',
-  'Meta Knight',
-  'Mewtwo',
-  'Mii Brawler',
-  'Mii Gunner',
-  'Mii Swordfighter',
-  'Min Min',
-  'Mr. Game & Watch',
-  'Ness',
-  'Olimar',
-  'Pac-Man',
-  'Palutena',
-  'Peach',
-  'Pichu',
-  'Pikachu',
-  'Piranha Plant',
-  'Pit',
-  'Pokémon Trainer',
-  'Pyra/Mythra',
-  'Richter',
-  'Ridley',
-  'R.O.B.',
-  'Robin',
-  'Rosalina & Luma',
-  'Roy',
-  'Ryu',
-  'Samus',
-  'Sephiroth',
-  'Sheik',
-  'Shulk',
-  'Simon',
-  'Snake',
-  'Sonic',
-  'Sora',
-  'Steve',
-  'Terry',
-  'Toon Link',
-  'Villager',
-  'Wario',
-  'Wii Fit Trainer',
-  'Wolf',
-  'Yoshi',
-  'Young Link',
-  'Zelda',
-  'Zero Suit Samus',
-];
+import { characters } from '~/utils/constants';
 
 const Sidebar = ({ leagues, teams }: { leagues: any; teams: any }) => {
   return (
@@ -497,37 +409,41 @@ const UpcomingMatches = ({ clubId }: { clubId: string }) => {
 
   return (
     <VStack spacing={4} align="stretch">
-      {data?.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map((match: any) => {
-        const teamSide = match.blueTeam.clubId === clubId ? 'blue' : 'red';
-        return (
-          <VStack key={match.id} align="stretch">
-            <HStack align="stretch" justify="space-between">
-              <VStack spacing={2} align="stretch">
-                <Text>
-                  {match.blueTeam.name} vs {match.redTeam.name}
-                </Text>
-                <Text>{new Date(match.date).toDateString()}</Text>
-              </VStack>
-              <SubmitScoreModal
-                isOpen={isOpen}
-                onClose={onClose}
-                matchId={match.id}
-                teamSide={teamSide}
-                teamId={match[`${teamSide}Team`].id}
-              />
-              <Button
-                colorScheme="blue"
-                size="sm"
-                variant="outline"
-                onClick={() => onOpen()}
-              >
-                Submit Score
-              </Button>
-            </HStack>
-            <Divider />
-          </VStack>
-        );
-      })}
+      {data
+        ?.sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        )
+        .map((match: any) => {
+          const teamSide = match.blueTeam.clubId === clubId ? 'blue' : 'red';
+          return (
+            <VStack key={match.id} align="stretch">
+              <HStack align="stretch" justify="space-between">
+                <VStack spacing={2} align="stretch">
+                  <Text>
+                    {match.blueTeam.name} vs {match.redTeam.name}
+                  </Text>
+                  <Text>{new Date(match.date).toDateString()}</Text>
+                </VStack>
+                <SubmitScoreModal
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  matchId={match.id}
+                  teamSide={teamSide}
+                  teamId={match[`${teamSide}Team`].id}
+                />
+                <Button
+                  colorScheme="blue"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onOpen()}
+                >
+                  Submit Score
+                </Button>
+              </HStack>
+              <Divider />
+            </VStack>
+          );
+        })}
     </VStack>
   );
 };

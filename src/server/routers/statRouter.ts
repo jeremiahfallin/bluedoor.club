@@ -19,6 +19,22 @@ export const statRouter = router({
       const stat = await statService.createStat(input);
       return stat;
     }),
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        matchId: z.string(),
+        playerId: z.string(),
+        teamId: z.string(),
+        character: z.string(),
+        stock: z.number(),
+        win: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const stat = await statService.updateStat(input);
+      return stat;
+    }),
   delete: publicProcedure.input(z.string()).mutation(async ({ input }) => {
     await statService.deleteStat(input);
     return true;

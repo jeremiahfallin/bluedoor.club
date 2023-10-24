@@ -130,7 +130,11 @@ export default function IndexPage() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Schedule data={data} />
+            <Schedule
+              data={data}
+              clubId={profileQuery?.data?.clubId}
+              refetch={leagueQuery.refetch}
+            />
           </TabPanel>
           <TabPanel>
             <LeagueParticipants data={data} />
