@@ -83,6 +83,11 @@ export async function getLeagueBySlug(slug: string): Promise<League | null> {
         include: {
           blueTeam: true,
           redTeam: true,
+          stat: {
+            include: {
+              player: true,
+            },
+          },
         },
         orderBy: {
           date: Prisma.SortOrder.asc,
