@@ -165,20 +165,22 @@ function TableRow({ match, clubId, refetch }: any) {
       const b1 = await upsertPlayerMutation.mutateAsync({
         name: blueDetails.player1.name,
         teamId: match.blueTeam.id,
-        handle: blueDetails.player1.handle,
+        [blueDetails.player1.handle !== '' ? 'handle' : '']:
+          blueDetails.player1.handle,
       });
       const b1p = b1.id;
       const b2 = await upsertPlayerMutation.mutateAsync({
         name: blueDetails.player2.name,
         teamId: match.blueTeam.id,
-        handle: blueDetails.player2.handle,
+        [blueDetails.player2.handle !== '' ? 'handle' : '']:
+          blueDetails.player2.handle,
       });
-      console.log(b2);
       const b2p = b2.id;
       const b3 = await upsertPlayerMutation.mutateAsync({
         name: blueDetails.player3.name,
         teamId: match.blueTeam.id,
-        handle: blueDetails.player3.handle,
+        [blueDetails.player3.handle !== '' ? 'handle' : '']:
+          blueDetails.player3.handle,
       });
       const b3p = b3.id;
       if (blueDetails.player1.statId !== '' && b1p) {
@@ -254,18 +256,22 @@ function TableRow({ match, clubId, refetch }: any) {
         name: redDetails.player1.name,
         teamId: match.redTeam.id,
         handle: redDetails.player1.handle,
+        [redDetails.player1.handle !== '' ? 'handle' : '']:
+          redDetails.player1.handle,
       });
       const r1p = r1.id;
       const r2 = await upsertPlayerMutation.mutateAsync({
         name: redDetails.player2.name,
         teamId: match.redTeam.id,
-        handle: redDetails.player2.handle,
+        [redDetails.player2.handle !== '' ? 'handle' : '']:
+          redDetails.player2.handle,
       });
       const r2p = r2.id;
       const r3 = await upsertPlayerMutation.mutateAsync({
         name: redDetails.player3.name,
         teamId: match.redTeam.id,
-        handle: redDetails.player3.handle,
+        [redDetails.player3.handle !== '' ? 'handle' : '']:
+          redDetails.player3.handle,
       });
       const r3p = r3.id;
       if (redDetails.player1.statId !== '' && r1p) {

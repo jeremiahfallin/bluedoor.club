@@ -115,7 +115,6 @@ model Player {
   stat      Stat[]
 
   @@unique([teamId, name])
-  @@unique([teamId, handle])
 }
 
 model Stat {
