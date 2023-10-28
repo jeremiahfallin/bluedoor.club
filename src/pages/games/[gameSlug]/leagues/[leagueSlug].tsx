@@ -1,6 +1,6 @@
 // pages/games/[gameSlug]/leagues/[leagueSlug].tsx
 import { useState } from 'react';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext } from 'next';
 
 import NextError from 'next/error';
 import {
@@ -26,6 +26,8 @@ import superjson from 'superjson';
 import { League } from '@prisma/client';
 import { JoinLeagueModal } from '~/pages/profile';
 import { useSession } from 'next-auth/react';
+import CharacterStats from '~/components/CharacterStats';
+import PlayerStats from '~/components/PlayerStats';
 
 interface LeagueWithMatches extends League {
   matches: {
@@ -105,7 +107,7 @@ export default function IndexPage() {
         {profileQuery &&
           profileQuery.data &&
           profileQuery.data.clubId &&
-          data.seasonStart < new Date() && (
+          data.seasonStart > new Date() && (
             <>
               <JoinLeagueModal
                 isOpen={isOpen}
@@ -127,6 +129,8 @@ export default function IndexPage() {
         <TabList>
           <Tab>Schedule</Tab>
           <Tab>Teams</Tab>
+          <Tab>Player Stats</Tab>
+          <Tab>Character Stats</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
@@ -138,6 +142,12 @@ export default function IndexPage() {
           </TabPanel>
           <TabPanel>
             <LeagueParticipants data={data} />
+          </TabPanel>
+          <TabPanel>
+            <PlayerStats data={data} />
+          </TabPanel>
+          <TabPanel>
+            <CharacterStats data={data} />
           </TabPanel>
         </TabPanels>
       </Tabs>
