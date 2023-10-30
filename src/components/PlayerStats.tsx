@@ -52,7 +52,10 @@ export default function PlayerStats({ data }: any) {
           </Thead>
           <Tbody>
             {Object.entries(teamPoints)
-              .sort((a, b): any => a[0] > b[0])
+              .sort(
+                (a: any, b: any): any =>
+                  b[1].points / b[1].matches - a[1].points / a[1].matches,
+              )
               .map((team: any, idx: number) => {
                 return (
                   <Tr key={idx}>
