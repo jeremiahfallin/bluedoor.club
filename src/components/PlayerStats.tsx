@@ -15,17 +15,19 @@ export default function PlayerStats({ data }: any) {
         acc[match.blueTeam.name] = {};
         acc[match.blueTeam.name].points = match.bluePoints || 0;
         acc[match.blueTeam.name].matches = 1;
+      } else {
+        acc[match.blueTeam.name].points += match.blueScore;
+        acc[match.blueTeam.name].matches += 1;
       }
-      acc[match.blueTeam.name].points += match.blueScore;
-      acc[match.blueTeam.name].matches += 1;
 
       if (!acc[match.redTeam.name]) {
         acc[match.redTeam.name] = {};
         acc[match.redTeam.name].points = match.redPoints || 0;
         acc[match.redTeam.name].matches = 1;
+      } else {
+        acc[match.redTeam.name].points += match.redScore;
+        acc[match.redTeam.name].matches += 1;
       }
-      acc[match.redTeam.name].points += match.redScore;
-      acc[match.redTeam.name].matches += 1;
     }
     return acc;
   }, {});
