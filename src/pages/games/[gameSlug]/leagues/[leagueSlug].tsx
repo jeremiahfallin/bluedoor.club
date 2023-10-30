@@ -1,6 +1,6 @@
 // pages/games/[gameSlug]/leagues/[leagueSlug].tsx
 import { useState } from 'react';
-import { GetServerSidePropsContext } from 'next';
+import { GetStaticPropsContext } from 'next';
 
 import NextError from 'next/error';
 import {
@@ -28,6 +28,8 @@ import { JoinLeagueModal } from '~/pages/profile';
 import { useSession } from 'next-auth/react';
 import CharacterStats from '~/components/CharacterStats';
 import PlayerStats from '~/components/PlayerStats';
+import { LeagueWithGame } from '~/server/services/leagueService';
+import { prisma } from '~/server/prisma';
 
 interface LeagueWithMatches extends League {
   matches: {
@@ -155,8 +157,32 @@ export default function IndexPage() {
   );
 }
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext<{ id: string }>,
+export const getStaticPaths = async () => {
+  const ssg = createServerSideHelpers({
+    router: appRouter,
+    ctx: await createContext(),
+    transformer: superjson,
+  });
+
+  const leagues = await prisma.league.findMany({
+    include: {
+      game: true,
+    },
+  });
+
+  return {
+    paths: leagues.map((league) => ({
+      params: {
+        gameSlug: league.game.slug,
+        leagueSlug: league.slug,
+      },
+    })),
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps = async (
+  context: GetStaticPropsContext<{ id: string }>,
 ) => {
   const ssg = createServerSideHelpers({
     router: appRouter,
@@ -170,6 +196,8 @@ export const getServerSideProps = async (
   return {
     props: {
       trpcState: ssg.dehydrate(),
+      id,
     },
+    revalidate: 60,
   };
 };
