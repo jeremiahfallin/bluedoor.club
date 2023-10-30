@@ -1,4 +1,4 @@
-import { Suspense, useState, useEffect, Fragment } from 'react';
+import { Suspense, useState, Fragment } from 'react';
 import {
   Box,
   Button,
@@ -53,14 +53,7 @@ const weekNumber = (date: Date) => {
 };
 
 function TimeDisplay({ date }: { date: Date }) {
-  const [time, setTime] = useState(date.toUTCString());
-
-  useEffect(() => {
-    setTime(() => {
-      return date.toLocaleString();
-    });
-  }, [time, date]);
-
+  const time = date.toLocaleString();
   return <>{time}</>;
 }
 
@@ -379,12 +372,12 @@ function TableRow({ match, clubId, refetch }: any) {
             <Table>
               <Thead background="green.700">
                 <Tr>
-                  <Td px={4}>Score</Td>
-                  <Td px={4}>Player</Td>
-                  <Td px={4}>Handle</Td>
-                  <Td px={4}>Character</Td>
-                  <Td px={4}>Match Wins</Td>
-                  <Td px={4}>Edit</Td>
+                  <Th px={4}>Score</Th>
+                  <Th px={4}>Player</Th>
+                  <Th px={4}>Handle</Th>
+                  <Th px={4}>Character</Th>
+                  <Th px={4}>Match Wins</Th>
+                  <Th px={4}>Edit</Th>
                 </Tr>
               </Thead>
               <Tbody>

@@ -17,13 +17,13 @@ export default function LeagueParticipants({ data }: { data: any }) {
     <Box as="main">
       <TableContainer>
         <Table>
-          <Thead>
+          {/* <Thead>
             <Tr>
               <Th>Team</Th>
               <Th>Club</Th>
               <Th>Availability</Th>
             </Tr>
-          </Thead>
+          </Thead> */}
           <Tbody>
             {data.teams.map((team: any) => {
               const isClubOwner = profile?.clubId == team.clubId;
