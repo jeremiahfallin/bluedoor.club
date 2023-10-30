@@ -175,8 +175,6 @@ export const getServerSideProps = async (
   return {
     props: {
       trpcState: ssg.dehydrate(),
-      id,
     },
-    revalidate: 1,
   };
 };
