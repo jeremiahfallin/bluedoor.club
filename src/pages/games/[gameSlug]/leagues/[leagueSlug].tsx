@@ -129,7 +129,7 @@ export default function IndexPage() {
         <TabList>
           <Tab>Schedule</Tab>
           <Tab>Teams</Tab>
-          <Tab>Player Stats</Tab>
+          <Tab>Team Stats</Tab>
           <Tab>Character Stats</Tab>
         </TabList>
         <TabPanels>
