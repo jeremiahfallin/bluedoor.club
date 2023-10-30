@@ -1,17 +1,16 @@
 import {
-  Box,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from '@chakra-ui/react';
+import { Suspense, useEffect, useState } from 'react';
 
 export default function CharacterStats({ data }: any) {
+  const [isClient, setIsClient] = useState(false);
   const stats = data.matches.flatMap((match: any) => {
     return match.stat;
   });
@@ -25,28 +24,36 @@ export default function CharacterStats({ data }: any) {
   }, {});
   delete characterTotals[''];
 
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
+
   return (
-    <TableContainer>
-      <Table>
-        <Thead>
-          <Th>Character</Th>
-          <Th>Matches Played</Th>
-        </Thead>
-        <Tbody>
-          {Object.entries(characterTotals)
-            .sort((a, b): any => a[0] > b[0])
-            .map((team: any, idx: number) => {
-              return (
-                <Tr key={idx}>
-                  <Td>{team[0]}</Td>
-                  <Td>
-                    <pre>{team[1]}</pre>
-                  </Td>
-                </Tr>
-              );
-            })}
-        </Tbody>
-      </Table>
-    </TableContainer>
+    <Suspense fallback={<div>Loading...</div>}>
+      <TableContainer>
+        <Table>
+          <Thead>
+            <Th>Character</Th>
+            <Th>Matches Played</Th>
+          </Thead>
+          <Tbody>
+            {Object.entries(characterTotals)
+              .sort((a, b): any => a[0] > b[0])
+              .map((team: any, idx: number) => {
+                return (
+                  <Tr key={idx}>
+                    <Td>{team[0]}</Td>
+                    <Td>
+                      <pre>{team[1]}</pre>
+                    </Td>
+                  </Tr>
+                );
+              })}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </Suspense>
   );
 }
