@@ -143,10 +143,10 @@ function TableRow({ match, clubId, refetch }: any) {
     }
     if ((canEditBlue || canEditRed) && isEditing) {
       const data = {} as any;
-      if (canEditBlue && blueScore && color === 'blue') {
+      if (canEditBlue && color === 'blue') {
         data['blueScore'] = parseInt(blueScore);
       }
-      if (canEditRed && redScore && color === 'blue') {
+      if (canEditRed && color === 'red') {
         data['redScore'] = parseInt(redScore);
       }
       updateMatchMutation.mutate({
