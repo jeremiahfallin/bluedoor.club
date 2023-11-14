@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { characters } from '~/utils/constants';
 import { trpc } from '~/utils/trpc';
+import { useSession } from 'next-auth/react';
 
 const colors = [
   'red',
@@ -59,11 +60,14 @@ function TimeDisplay({ date }: { date: Date }) {
 
 function TableRow({ match, clubId, refetch }: any) {
   const toast = useToast();
+  const { data: session } = useSession() as any;
   const [blueScore, setBlueScore] = useState(match.blueScore);
   const [redScore, setRedScore] = useState(match.redScore);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isEditingBlue, setIsEditingBlue] = useState(false);
   const [isEditingRed, setIsEditingRed] = useState(false);
+
+  console.log(session);
 
   const blueTeamStats = match.stat.filter(
     (stat: any) => stat.teamId === match.blueTeam.id,
@@ -124,8 +128,10 @@ function TableRow({ match, clubId, refetch }: any) {
     },
   });
 
-  const canEditBlue = match.blueTeam.clubId === clubId;
-  const canEditRed = match.redTeam.clubId === clubId;
+  const canEditBlue =
+    match.blueTeam.clubId === clubId || session?.user?.role === 'ADMIN';
+  const canEditRed =
+    match.redTeam.clubId === clubId || session?.user?.role === 'ADMIN';
 
   const createStatMutation = trpc.stat.create.useMutation();
   const updateStatMutation = trpc.stat.update.useMutation();
