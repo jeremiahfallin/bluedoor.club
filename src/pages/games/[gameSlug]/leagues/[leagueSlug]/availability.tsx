@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import Scheduler from '~/components/Scheduler';
+import Scheduler from '~/components/AvailabilitySelector';
 
 import { trpc } from '~/utils/trpc';
 
